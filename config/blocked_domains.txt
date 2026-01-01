@@ -1,0 +1,37 @@
+# Blocked Domains Configuration
+# Phase 3: HTTP Parsing & Routing Logic
+#
+# This file contains domains that should be blocked by the proxy.
+# One domain per line.
+# Lines starting with # are comments.
+# Empty lines are ignored.
+# Matching is case-insensitive.
+#
+# Subdomain matching: blocking "example.com" also blocks "www.example.com"
+
+# Social Media (for testing)
+facebook.com
+twitter.com
+instagram.com
+tiktok.com
+
+# Video Streaming (for testing)
+youtube.com
+netflix.com
+twitch.tv
+
+# Malicious/Test domains
+malware-test.com
+phishing-test.com
+bad-site.net
+
+# Adult content (for testing)
+adult-content.com
+
+# Gambling sites (for testing)
+gambling-site.com
+casino-test.com
+
+# Test domains for comprehensive testing
+blocked-domain.test
+test-blocked.local

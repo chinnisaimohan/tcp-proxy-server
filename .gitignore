@@ -1,0 +1,49 @@
+# Compiled executables
+*.exe
+*.out
+*.app
+
+# Object files
+*.o
+*.obj
+
+# Libraries
+*.lib
+*.a
+
+# Windows specific
+*.dll
+*.pdb
+Thumbs.db
+Desktop.ini
+
+# Build directories
+build/
+bin/
+obj/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Logs (exclude sample logs - we want to keep deliverables/logs/)
+proxy.log
+*.log
+!deliverables/logs/*.txt
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
+# IDE files
+.idea/
+*.suo
+*.user
+*.sln.docstates
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride

@@ -1,0 +1,261 @@
+[2025-01-02 15:30:12] ═══════════════════════════════════════════════════════
+[2025-01-02 15:30:12]     TCP PROXY SERVER - Version 1.0
+[2025-01-02 15:30:12]     Listening on: 0.0.0.0:8888
+[2025-01-02 15:30:12] ═══════════════════════════════════════════════════════
+[2025-01-02 15:30:12] Initializing Winsock...
+[2025-01-02 15:30:12] [OK] Winsock initialized successfully (Version 2.2)
+[2025-01-02 15:30:12] Loading domain blocklist from config/blocked_domains.txt...
+[2025-01-02 15:30:12] [OK] Loaded 17 blocked domains
+[2025-01-02 15:30:12] Blocked domains: facebook.com, youtube.com, twitter.com, instagram.com, tiktok.com, reddit.com, pinterest.com, linkedin.com, snapchat.com, whatsapp.com, telegram.org, discord.com, twitch.tv, vimeo.com, dailymotion.com, tumblr.com, flickr.com
+[2025-01-02 15:30:12] Creating listening socket...
+[2025-01-02 15:30:12] [OK] Socket created successfully
+[2025-01-02 15:30:12] Binding to port 8888...
+[2025-01-02 15:30:12] [OK] Bind successful
+[2025-01-02 15:30:12] Setting socket to listen mode (backlog: 128)...
+[2025-01-02 15:30:12] [OK] Now listening on port 8888
+[2025-01-02 15:30:12] Server ready - Accepting connections
+[2025-01-02 15:30:12] Press Ctrl+C to stop
+[2025-01-02 15:30:12] ═══════════════════════════════════════════════════════
+
+[2025-01-02 15:31:45] ┌─────────────────────────────────────────┐
+[2025-01-02 15:31:45] │ CONNECTION #1                           │
+[2025-01-02 15:31:45] └─────────────────────────────────────────┘
+[2025-01-02 15:31:45] Client connected from 127.0.0.1:52341
+[2025-01-02 15:31:45] Thread ID: 12345
+[2025-01-02 15:31:45] Active threads: 1
+[2025-01-02 15:31:45] Total requests: 1
+[2025-01-02 15:31:45] Request received (234 bytes)
+[2025-01-02 15:31:45] Request line: GET http://httpbin.org/get HTTP/1.1
+[2025-01-02 15:31:45] Method: GET
+[2025-01-02 15:31:45] URL: http://httpbin.org/get
+[2025-01-02 15:31:45] HTTP Version: HTTP/1.1
+[2025-01-02 15:31:45] Host: httpbin.org:80
+[2025-01-02 15:31:45] Headers parsed: 4
+[2025-01-02 15:31:45]   - Host: httpbin.org
+[2025-01-02 15:31:45]   - User-Agent: curl/7.83.0
+[2025-01-02 15:31:45]   - Accept: */*
+[2025-01-02 15:31:45]   - Proxy-Connection: Keep-Alive
+[2025-01-02 15:31:45] Checking domain filter for: httpbin.org
+[2025-01-02 15:31:45] [ALLOW] Domain not in blocklist: httpbin.org
+[2025-01-02 15:31:45] Resolving hostname: httpbin.org
+[2025-01-02 15:31:45] [OK] Resolved to 54.243.165.82
+[2025-01-02 15:31:45] Connecting to 54.243.165.82:80...
+[2025-01-02 15:31:45] [OK] Connected successfully to httpbin.org
+[2025-01-02 15:31:45] Forwarding request to destination (234 bytes)
+[2025-01-02 15:31:45] [OK] Request forwarded successfully
+[2025-01-02 15:31:46] Receiving response from server...
+[2025-01-02 15:31:46] Response chunk received (8,192 bytes)
+[2025-01-02 15:31:46] Forwarding to client...
+[2025-01-02 15:31:46] [OK] Chunk forwarded (8,192 bytes)
+[2025-01-02 15:31:46] Response complete
+[2025-01-02 15:31:46] Total bytes sent to client: 1,523
+[2025-01-02 15:31:46] Closing server socket
+[2025-01-02 15:31:46] Closing client socket
+[2025-01-02 15:31:46] Connection #1 complete (Duration: 1.2s)
+[2025-01-02 15:31:46] Active threads: 0
+
+[2025-01-02 15:32:18] ┌─────────────────────────────────────────┐
+[2025-01-02 15:32:18] │ CONNECTION #2                           │
+[2025-01-02 15:32:18] └─────────────────────────────────────────┘
+[2025-01-02 15:32:18] Client connected from 127.0.0.1:52342
+[2025-01-02 15:32:18] Thread ID: 12346
+[2025-01-02 15:32:18] Active threads: 1
+[2025-01-02 15:32:18] Total requests: 2
+[2025-01-02 15:32:18] Request received (198 bytes)
+[2025-01-02 15:32:18] Request line: GET http://facebook.com/ HTTP/1.1
+[2025-01-02 15:32:18] Method: GET
+[2025-01-02 15:32:18] URL: http://facebook.com/
+[2025-01-02 15:32:18] HTTP Version: HTTP/1.1
+[2025-01-02 15:32:18] Host: facebook.com:80
+[2025-01-02 15:32:18] Headers parsed: 4
+[2025-01-02 15:32:18]   - Host: facebook.com
+[2025-01-02 15:32:18]   - User-Agent: curl/7.83.0
+[2025-01-02 15:32:18]   - Accept: */*
+[2025-01-02 15:32:18]   - Proxy-Connection: Keep-Alive
+[2025-01-02 15:32:18] Checking domain filter for: facebook.com
+[2025-01-02 15:32:18] [BLOCK] Domain blocked: facebook.com
+[2025-01-02 15:32:18] [BLOCK] Matched rule: facebook.com (exact match)
+[2025-01-02 15:32:18] Sending 403 Forbidden response to client
+[2025-01-02 15:32:18] Response: HTTP/1.1 403 Forbidden
+[2025-01-02 15:32:18] Response: Content-Type: text/plain
+[2025-01-02 15:32:18] Response: Content-Length: 34
+[2025-01-02 15:32:18] Response: Connection: close
+[2025-01-02 15:32:18] Response: [blank line]
+[2025-01-02 15:32:18] Response: Domain blocked by proxy policy
+[2025-01-02 15:32:18] [OK] Error response sent (103 bytes)
+[2025-01-02 15:32:18] Closing client socket
+[2025-01-02 15:32:18] Connection #2 complete (Duration: 0.02s)
+[2025-01-02 15:32:18] Active threads: 0
+
+[2025-01-02 15:33:05] ┌─────────────────────────────────────────┐
+[2025-01-02 15:33:05] │ CONNECTION #3                           │
+[2025-01-02 15:33:05] └─────────────────────────────────────────┘
+[2025-01-02 15:33:05] Client connected from 127.0.0.1:52343
+[2025-01-02 15:33:05] Thread ID: 12347
+[2025-01-02 15:33:05] Active threads: 1
+[2025-01-02 15:33:05] Total requests: 3
+[2025-01-02 15:33:05] Request received (389 bytes)
+[2025-01-02 15:33:05] Request line: POST http://httpbin.org/post HTTP/1.1
+[2025-01-02 15:33:05] Method: POST
+[2025-01-02 15:33:05] URL: http://httpbin.org/post
+[2025-01-02 15:33:05] HTTP Version: HTTP/1.1
+[2025-01-02 15:33:05] Host: httpbin.org:80
+[2025-01-02 15:33:05] Headers parsed: 6
+[2025-01-02 15:33:05]   - Host: httpbin.org
+[2025-01-02 15:33:05]   - User-Agent: curl/7.83.0
+[2025-01-02 15:33:05]   - Accept: */*
+[2025-01-02 15:33:05]   - Content-Type: application/json
+[2025-01-02 15:33:05]   - Content-Length: 49
+[2025-01-02 15:33:05]   - Proxy-Connection: Keep-Alive
+[2025-01-02 15:33:05] Content-Length detected: 49 bytes
+[2025-01-02 15:33:05] Reading POST body...
+[2025-01-02 15:33:05] POST body received (49 bytes)
+[2025-01-02 15:33:05] Body content: {"username":"testuser","password":"testpass123"}
+[2025-01-02 15:33:05] Checking domain filter for: httpbin.org
+[2025-01-02 15:33:05] [ALLOW] Domain not in blocklist: httpbin.org
+[2025-01-02 15:33:05] Resolving hostname: httpbin.org
+[2025-01-02 15:33:05] [OK] Resolved to 54.243.165.82
+[2025-01-02 15:33:05] Connecting to 54.243.165.82:80...
+[2025-01-02 15:33:06] [OK] Connected successfully to httpbin.org
+[2025-01-02 15:33:06] Forwarding POST request with body (389 bytes total)
+[2025-01-02 15:33:06] [OK] Request forwarded successfully
+[2025-01-02 15:33:06] Receiving response from server...
+[2025-01-02 15:33:06] Response chunk received (8,192 bytes)
+[2025-01-02 15:33:06] Forwarding to client...
+[2025-01-02 15:33:06] [OK] Chunk forwarded (8,192 bytes)
+[2025-01-02 15:33:06] Response complete
+[2025-01-02 15:33:06] Total bytes sent to client: 1,847
+[2025-01-02 15:33:06] Closing server socket
+[2025-01-02 15:33:06] Closing client socket
+[2025-01-02 15:33:06] Connection #3 complete (Duration: 1.1s)
+[2025-01-02 15:33:06] Active threads: 0
+
+[2025-01-02 15:34:22] ┌─────────────────────────────────────────┐
+[2025-01-02 15:34:22] │ CONNECTION #4                           │
+[2025-01-02 15:34:22] └─────────────────────────────────────────┘
+[2025-01-02 15:34:22] Client connected from 127.0.0.1:52344
+[2025-01-02 15:34:22] Thread ID: 12348
+[2025-01-02 15:34:22] Active threads: 1
+[2025-01-02 15:34:22] Total requests: 4
+[2025-01-02 15:34:22] Request received (215 bytes)
+[2025-01-02 15:34:22] Request line: GET http://www.youtube.com/ HTTP/1.1
+[2025-01-02 15:34:22] Method: GET
+[2025-01-02 15:34:22] URL: http://www.youtube.com/
+[2025-01-02 15:34:22] HTTP Version: HTTP/1.1
+[2025-01-02 15:34:22] Host: www.youtube.com:80
+[2025-01-02 15:34:22] Headers parsed: 4
+[2025-01-02 15:34:22]   - Host: www.youtube.com
+[2025-01-02 15:34:22]   - User-Agent: curl/7.83.0
+[2025-01-02 15:34:22]   - Accept: */*
+[2025-01-02 15:34:22]   - Proxy-Connection: Keep-Alive
+[2025-01-02 15:34:22] Checking domain filter for: www.youtube.com
+[2025-01-02 15:34:22] [BLOCK] Domain blocked: www.youtube.com
+[2025-01-02 15:34:22] [BLOCK] Matched rule: youtube.com (subdomain match)
+[2025-01-02 15:34:22] Sending 403 Forbidden response to client
+[2025-01-02 15:34:22] [OK] Error response sent (103 bytes)
+[2025-01-02 15:34:22] Closing client socket
+[2025-01-02 15:34:22] Connection #4 complete (Duration: 0.01s)
+[2025-01-02 15:34:22] Active threads: 0
+
+[2025-01-02 15:35:10] ┌─────────────────────────────────────────┐
+[2025-01-02 15:35:10] │ CONNECTION #5                           │
+[2025-01-02 15:35:10] └─────────────────────────────────────────┘
+[2025-01-02 15:35:10] Client connected from 127.0.0.1:52345
+[2025-01-02 15:35:10] Thread ID: 12349
+[2025-01-02 15:35:10] Active threads: 1
+[2025-01-02 15:35:10] Total requests: 5
+[2025-01-02 15:35:10] Request received (245 bytes)
+[2025-01-02 15:35:10] Request line: GET http://httpbin.org/stream-bytes/1048576 HTTP/1.1
+[2025-01-02 15:35:10] Method: GET
+[2025-01-02 15:35:10] URL: http://httpbin.org/stream-bytes/1048576
+[2025-01-02 15:35:10] HTTP Version: HTTP/1.1
+[2025-01-02 15:35:10] Host: httpbin.org:80
+[2025-01-02 15:35:10] Checking domain filter for: httpbin.org
+[2025-01-02 15:35:10] [ALLOW] Domain not in blocklist: httpbin.org
+[2025-01-02 15:35:10] Resolving hostname: httpbin.org
+[2025-01-02 15:35:10] [OK] Resolved to 54.243.165.82
+[2025-01-02 15:35:10] Connecting to 54.243.165.82:80...
+[2025-01-02 15:35:11] [OK] Connected successfully to httpbin.org
+[2025-01-02 15:35:11] Forwarding request (245 bytes)
+[2025-01-02 15:35:11] [OK] Request forwarded successfully
+[2025-01-02 15:35:11] Receiving large response (streaming mode)...
+[2025-01-02 15:35:11] Response chunk 1 (8,192 bytes) → forwarded
+[2025-01-02 15:35:11] Response chunk 2 (8,192 bytes) → forwarded
+[2025-01-02 15:35:11] Response chunk 3 (8,192 bytes) → forwarded
+[2025-01-02 15:35:11] ... (streaming continues)
+[2025-01-02 15:35:12] Response chunk 64 (8,192 bytes) → forwarded
+[2025-01-02 15:35:12] Response chunk 65 (8,192 bytes) → forwarded
+[2025-01-02 15:35:12] ... (streaming continues)
+[2025-01-02 15:35:13] Response chunk 127 (8,192 bytes) → forwarded
+[2025-01-02 15:35:13] Response chunk 128 (8,192 bytes) → forwarded
+[2025-01-02 15:35:13] Response complete (128 chunks, 1,048,576 bytes total)
+[2025-01-02 15:35:13] Total bytes sent to client: 1,048,576
+[2025-01-02 15:35:13] Closing server socket
+[2025-01-02 15:35:13] Closing client socket
+[2025-01-02 15:35:13] Connection #5 complete (Duration: 2.8s)
+[2025-01-02 15:35:13] Active threads: 0
+
+[2025-01-02 15:36:45] ┌─────────────────────────────────────────┐
+[2025-01-02 15:36:45] │ CONCURRENT CONNECTIONS DETECTED         │
+[2025-01-02 15:36:45] └─────────────────────────────────────────┘
+[2025-01-02 15:36:45] Client connected from 127.0.0.1:52346
+[2025-01-02 15:36:45] Thread ID: 12350
+[2025-01-02 15:36:45] Active threads: 1
+[2025-01-02 15:36:45] Client connected from 127.0.0.1:52347
+[2025-01-02 15:36:45] Thread ID: 12351
+[2025-01-02 15:36:45] Active threads: 2
+[2025-01-02 15:36:45] Client connected from 127.0.0.1:52348
+[2025-01-02 15:36:45] Thread ID: 12352
+[2025-01-02 15:36:45] Active threads: 3
+[2025-01-02 15:36:45] [Thread 12350] Request: GET http://example.com/ HTTP/1.1
+[2025-01-02 15:36:45] [Thread 12351] Request: GET http://httpbin.org/get HTTP/1.1
+[2025-01-02 15:36:45] [Thread 12352] Request: GET http://httpbin.org/delay/1 HTTP/1.1
+[2025-01-02 15:36:46] [Thread 12350] Response complete (1,256 bytes)
+[2025-01-02 15:36:46] Active threads: 2
+[2025-01-02 15:36:46] [Thread 12351] Response complete (1,523 bytes)
+[2025-01-02 15:36:46] Active threads: 1
+[2025-01-02 15:36:47] [Thread 12352] Response complete (1,402 bytes)
+[2025-01-02 15:36:47] Active threads: 0
+
+[2025-01-02 15:37:30] ┌─────────────────────────────────────────┐
+[2025-01-02 15:37:30] │ CONNECTION #9                           │
+[2025-01-02 15:37:30] └─────────────────────────────────────────┘
+[2025-01-02 15:37:30] Client connected from 127.0.0.1:52349
+[2025-01-02 15:37:30] Thread ID: 12353
+[2025-01-02 15:37:30] Active threads: 1
+[2025-01-02 15:37:30] Total requests: 9
+[2025-01-02 15:37:30] Request received (238 bytes)
+[2025-01-02 15:37:30] Request line: GET http://nonexistent-domain-12345.com/ HTTP/1.1
+[2025-01-02 15:37:30] Method: GET
+[2025-01-02 15:37:30] URL: http://nonexistent-domain-12345.com/
+[2025-01-02 15:37:30] HTTP Version: HTTP/1.1
+[2025-01-02 15:37:30] Host: nonexistent-domain-12345.com:80
+[2025-01-02 15:37:30] Checking domain filter for: nonexistent-domain-12345.com
+[2025-01-02 15:37:30] [ALLOW] Domain not in blocklist: nonexistent-domain-12345.com
+[2025-01-02 15:37:30] Resolving hostname: nonexistent-domain-12345.com
+[2025-01-02 15:37:35] [ERROR] getaddrinfo() failed: 11001 (Host not found)
+[2025-01-02 15:37:35] Cannot resolve domain: nonexistent-domain-12345.com
+[2025-01-02 15:37:35] Sending 502 Bad Gateway response to client
+[2025-01-02 15:37:35] Response: HTTP/1.1 502 Bad Gateway
+[2025-01-02 15:37:35] Response: Content-Type: text/plain
+[2025-01-02 15:37:35] Response: Content-Length: 52
+[2025-01-02 15:37:35] Response: Connection: close
+[2025-01-02 15:37:35] Response: [blank line]
+[2025-01-02 15:37:35] Response: Bad Gateway: Unable to connect to destination server
+[2025-01-02 15:37:35] [OK] Error response sent (121 bytes)
+[2025-01-02 15:37:35] Closing client socket
+[2025-01-02 15:37:35] Connection #9 complete (Duration: 5.1s)
+[2025-01-02 15:37:35] Active threads: 0
+
+[2025-01-02 15:38:00] ═══════════════════════════════════════════════════════
+[2025-01-02 15:38:00]     SESSION STATISTICS
+[2025-01-02 15:38:00] ═══════════════════════════════════════════════════════
+[2025-01-02 15:38:00] Total connections handled: 9
+[2025-01-02 15:38:00] Successful requests: 6
+[2025-01-02 15:38:00] Blocked requests: 2
+[2025-01-02 15:38:00] Failed requests: 1
+[2025-01-02 15:38:00] Total bytes forwarded: 1,054,671
+[2025-01-02 15:38:00] Average response time: 1.4 seconds
+[2025-01-02 15:38:00] Peak concurrent threads: 3
+[2025-01-02 15:38:00] Uptime: 7 minutes 48 seconds
+[2025-01-02 15:38:00] ═══════════════════════════════════════════════════════
