@@ -106,7 +106,75 @@ $cat4 += Test-ProxyRequest "4.2 Stream 50 objects (9KB+)" "GET /stream/50 HTTP/1
 Start-Sleep -Milliseconds 300
 $cat4Pass = ($cat4 | Where-Object {$_ -eq $true}).Count
 Write-Host "`nResult: $cat4Pass/2 PASSED`n" -ForegroundColor $(if($cat4Pass -eq 2){"Green"}else{"Red"})
+# CATEGORY 5: Concurrent Client Handling (PHASE 5)
+Write-Host "========================================" -ForegroundColor Yellow
+Write-Host "CATEGORY 5: Concurrent Client Handling" -ForegroundColor Yellow
+Write-Host "========================================" -ForegroundColor Yellow
+Write-Host "Testing 10 simultaneous client connections..." -ForegroundColor Gray
 
+$cat5 = @()
+$jobs = @()
+
+# Launch 10 concurrent requests using background jobs
+1..10 | ForEach-Object {
+    $jobNum = $_
+    $jobs += Start-Job -ScriptBlock {
+        param($num)
+        try {
+            $client = New-Object System.Net.Sockets.TcpClient
+            $client.ReceiveTimeout = 5000
+            $client.SendTimeout = 5000
+            $client.Connect("127.0.0.1", 8888)
+            
+            $stream = $client.GetStream()
+            $request = "GET / HTTP/1.1`r`nHost: example.com`r`n`r`n"
+            $bytes = [System.Text.Encoding]::ASCII.GetBytes($request)
+            $stream.Write($bytes, 0, $bytes.Length)
+            $stream.Flush()
+            
+            $buffer = New-Object byte[] 8192
+            $response = ""
+            $bytesRead = $stream.Read($buffer, 0, $buffer.Length)
+            if ($bytesRead -gt 0) {
+                $response = [System.Text.Encoding]::ASCII.GetString($buffer, 0, $bytesRead)
+            }
+            
+            $client.Close()
+            
+            if ($response -match "HTTP/\d\.\d 200") {
+                return @{Success=$true; JobNum=$num}
+            }
+            return @{Success=$false; JobNum=$num}
+        }
+        catch {
+            return @{Success=$false; JobNum=$num; Error=$_.Exception.Message}
+        }
+    } -ArgumentList $jobNum
+}
+
+# Wait for all jobs to complete
+$jobs | Wait-Job | Out-Null
+
+# Collect results
+$successCount = 0
+$failCount = 0
+foreach ($job in $jobs) {
+    $result = Receive-Job -Job $job
+    if ($result.Success) {
+        $successCount++
+        Write-Host "  [PASS] Concurrent Request #$($result.JobNum)" -ForegroundColor Green
+    } else {
+        $failCount++
+        Write-Host "  [FAIL] Concurrent Request #$($result.JobNum)" -ForegroundColor Red
+    }
+}
+
+# Clean up jobs
+$jobs | Remove-Job
+
+$cat5Pass = if ($successCount -ge 8) { 1 } else { 0 }
+Write-Host "`nResult: $successCount/10 requests successful (Pass threshold: 8/10)" -ForegroundColor $(if($cat5Pass -eq 1){"Green"}else{"Red"})
+Write-Host "This demonstrates thread-per-connection concurrency model`n" -ForegroundColor Gray
 # FINAL SUMMARY
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  FINAL RESULTS" -ForegroundColor White
@@ -115,10 +183,11 @@ Write-Host "Category 1 (Basic Forwarding):  $cat1Pass/5 PASSED" -ForegroundColor
 Write-Host "Category 2 (Domain Filtering):  $cat2Pass/6 PASSED" -ForegroundColor $(if($cat2Pass -eq 6){"Green"}else{"Red"})
 Write-Host "Category 3 (Error Handling):    $cat3Pass/2 PASSED" -ForegroundColor $(if($cat3Pass -eq 2){"Green"}else{"Red"})
 Write-Host "Category 4 (Large Transfers):   $cat4Pass/2 PASSED" -ForegroundColor $(if($cat4Pass -eq 2){"Green"}else{"Red"})
+Write-Host "Category 5 (Concurrent):        $cat5Pass/1 PASSED" -ForegroundColor $(if($cat5Pass -eq 1){"Green"}else{"Red"})
 Write-Host "----------------------------------------" -ForegroundColor Cyan
 
-$totalTests = 5 + 6 + 2 + 2
-$totalPass = $cat1Pass + $cat2Pass + $cat3Pass + $cat4Pass
+$totalTests = 5 + 6 + 2 + 2 + 1
+$totalPass = $cat1Pass + $cat2Pass + $cat3Pass + $cat4Pass + $cat5Pass
 Write-Host "Total Tests: $totalTests" -ForegroundColor White
 Write-Host "Total Passed: $totalPass" -ForegroundColor Green
 Write-Host "Total Failed: $($totalTests - $totalPass)" -ForegroundColor $(if($totalPass -eq $totalTests){"Green"}else{"Red"})

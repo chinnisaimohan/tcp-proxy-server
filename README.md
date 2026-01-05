@@ -561,8 +561,38 @@ Invoke-WebRequest -Uri "http://example.com"
 
 ### 6.6 Running Tests
 
+#### 6.6.1 Prerequisites - Start Proxy Server First
+
+**IMPORTANT:** Before running any tests, the proxy server must be running in a separate terminal.
+
+**Setup Steps:**
+
+1. **Terminal 1 - Start Proxy Server:**
+   ```powershell
+   cd "C:\Users\Admin\Desktop\ACM Project"
+   .\bin\proxy_server.exe
+   ```
+   Keep this terminal **open** and running. You will see connection logs here.
+
+2. **Terminal 2 - Run Tests:**
+   Open a new terminal window and proceed with test commands below.
+
+**Quick Start (Automated):**
 ```powershell
-# Run all basic functionality tests (20 tests)
+# Start server in new terminal window
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\Admin\Desktop\ACM Project"; .\bin\proxy_server.exe'
+
+# Wait for server to start
+Start-Sleep -Seconds 3
+
+# Run tests in current terminal
+.\test_suite.ps1
+```
+
+#### 6.6.2 Test Suites
+
+```powershell
+# Run all basic functionality tests (16 tests: forwarding, filtering, errors, large transfers, concurrent)
 .\test_suite.ps1
 
 # Run large POST body tests (4 tests)
@@ -571,6 +601,11 @@ Invoke-WebRequest -Uri "http://example.com"
 # Run stress & edge case tests (18 tests)
 .\bin\test_stress.exe
 ```
+
+**Expected Output:**
+- Test suite shows PASS/FAIL for each test category
+- Server terminal displays connection logs and request handling
+- All tests should pass when server is running correctly
 
 ---
 
