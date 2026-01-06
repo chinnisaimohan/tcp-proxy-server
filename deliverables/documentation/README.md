@@ -529,7 +529,7 @@ For permanent PATH configuration, see [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS
 
 ```powershell
 # Navigate to project directory
-cd "C:\Users\Admin\Desktop\ACM Project"
+cd "C:\Users\Admin\Desktop\tcp-proxy-server"
 
 # Build all components
 make all
@@ -548,7 +548,7 @@ $env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
 
 ```powershell
 # Navigate to project directory
-cd "C:\Users\Admin\Desktop\ACM Project"
+cd "C:\Users\Admin\Desktop\tcp-proxy-server"
 
 # Compile proxy server
 g++ src\proxy_server.cpp -o bin\proxy_server.exe -lws2_32 -std=c++17 -Wall
@@ -616,7 +616,7 @@ Invoke-WebRequest -Uri "http://example.com"
 
 1. **Terminal 1 - Start Proxy Server:**
    ```powershell
-   cd "C:\Users\Admin\Desktop\ACM Project"
+   cd "C:\Users\Admin\Desktop\tcp-proxy-server"
    .\bin\proxy_server.exe
    ```
    Keep this terminal **open** and running. You will see connection logs here.
@@ -627,7 +627,7 @@ Invoke-WebRequest -Uri "http://example.com"
 **Quick Start (Automated):**
 ```powershell
 # Start server in new terminal window
-Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\Admin\Desktop\ACM Project"; .\bin\proxy_server.exe'
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\Admin\Desktop\tcp-proxy-server"; .\bin\proxy_server.exe'
 
 # Wait for server to start
 Start-Sleep -Seconds 3
@@ -790,7 +790,7 @@ This project serves as a strong foundation for learning network programming, HTT
 ### A. Project Structure
 
 ```
-ACM Project/
+tcp-proxy-server/
 ├── src/
 │   ├── proxy_server.cpp          # Main proxy server (all 5 phases)
 │   ├── test_comprehensive.cpp    # 40 general tests
