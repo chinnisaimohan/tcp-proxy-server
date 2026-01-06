@@ -498,8 +498,53 @@ Three comprehensive test suites were developed:
 - **Operating System:** Windows 10/11
 - **Compiler:** g++ (MinGW-w64) with C++17 support
 - **Libraries:** Winsock2 (ws2_32.lib)
+- **Build Tool (Optional):** GNU Make for using Makefile
+
+#### Installing GNU Make
+
+If you want to use the Makefile for building:
+
+```powershell
+# Option 1: Using winget (recommended)
+winget install GnuWin32.Make
+
+# Option 2: Using Chocolatey
+choco install make
+```
+
+**Add to PATH (required after installation):**
+```powershell
+# Add to current PowerShell session
+$env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
+
+# Verify installation
+make --version
+```
+
+For permanent PATH configuration, see [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md).
 
 ### 6.2 Building from Source
+
+#### Option 1: Using Makefile (Recommended)
+
+```powershell
+# Navigate to project directory
+cd "C:\Users\Admin\Desktop\ACM Project"
+
+# Build all components
+make all
+
+# Or build specific targets
+make server    # Build only proxy server
+make tests     # Build only test clients
+```
+
+**Note:** If you get "make: The term 'make' is not recognized", add Make to PATH:
+```powershell
+$env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
+```
+
+#### Option 2: Manual Compilation
 
 ```powershell
 # Navigate to project directory
