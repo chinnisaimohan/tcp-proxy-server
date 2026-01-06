@@ -155,8 +155,10 @@ The proxy server follows a multi-layered architecture:
 | **Language** | C++17 |
 | **Networking API** | Winsock 2.2 (Windows Socket API) |
 | **Concurrency** | C++ Standard Library (`<thread>`, `<mutex>`, `<atomic>`) |
-| **Build System** | g++ (MinGW-w64) |
+| **Build System** | GNU Make + g++ (MinGW-w64) |
 | **Testing** | Custom C++ test clients + PowerShell scripts |
+
+**Note:** The Makefile is compatible with GnuWin32 Make 3.81. The build system uses Windows-compatible commands (no bash dependencies).
 
 ### 3.2 Key Implementation Phases
 
@@ -804,7 +806,6 @@ whatsapp.com
 
 **Project:** Custom Network Proxy Server  
 **Version:** 1.0.0  
-**Status:** Production Ready  
 **Last Updated:** January 2, 2026
 
 ---

@@ -882,6 +882,45 @@ BLOCKED: youtube.com
 
 ---
 
+### 7.4 Build System Issues
+
+**Problem:**
+```powershell
+make all
+make: The term 'make' is not recognized
+```
+
+**Solution:**
+```powershell
+# Install GNU Make
+winget install GnuWin32.Make
+
+# Add to PATH
+$env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
+
+# Verify
+make --version
+# Output: GNU Make 3.81
+
+# Now build
+make all
+```
+
+**Demonstration Points:**
+✅ Shows complete setup process  
+✅ PATH configuration explained  
+✅ Verification step included  
+✅ Alternative: manual compilation always works  
+
+**Alternative (Manual Compilation):**
+```powershell
+# If make fails, use manual compilation
+mkdir bin -Force
+g++ src\proxy_server.cpp -o bin\proxy_server.exe -lws2_32 -std=c++17 -Wall
+```
+
+---
+
 ## Appendix: Video Demonstration Script
 
 ### Recommended Recording Flow

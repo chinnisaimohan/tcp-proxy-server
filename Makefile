@@ -27,12 +27,10 @@ TEST_STRESS_SRC = $(SRC_DIR)/test_stress.cpp
 # Default target: build all
 .PHONY: all
 all: $(PROXY_SERVER) $(TEST_COMPREHENSIVE) $(TEST_EDGE_CASES) $(TEST_STRESS)
-	@echo.
 	@echo ========================================
 	@echo   BUILD COMPLETE
 	@echo ========================================
 	@echo All executables compiled successfully!
-	@echo.
 
 # Build proxy server
 $(PROXY_SERVER): $(PROXY_SRC)
@@ -76,11 +74,9 @@ run: $(PROXY_SERVER)
 # Run all test suites
 .PHONY: test
 test: all
-	@echo.
 	@echo ========================================
 	@echo   RUNNING TEST SUITES
 	@echo ========================================
-	@echo.
 	@powershell -Command ".\test_suite.ps1"
 	@powershell -Command ".\test_post_bodies.ps1"
 	@$(TEST_STRESS)
@@ -108,11 +104,9 @@ install: all
 # Show help
 .PHONY: help
 help:
-	@echo.
 	@echo ========================================
 	@echo   TCP Proxy Server - Makefile Help
 	@echo ========================================
-	@echo.
 	@echo Available targets:
 	@echo   make all        - Build all executables (default)
 	@echo   make server     - Build only proxy server
@@ -122,9 +116,7 @@ help:
 	@echo   make clean      - Remove compiled executables
 	@echo   make distclean  - Remove all build artifacts
 	@echo   make help       - Show this help message
-	@echo.
 	@echo Examples:
 	@echo   make            - Build everything
 	@echo   make clean all  - Clean then rebuild
 	@echo   make run        - Start the proxy server
-	@echo.

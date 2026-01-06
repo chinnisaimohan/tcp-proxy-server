@@ -59,10 +59,34 @@ g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
    ```
 
 3. **Install GNU Make (optional):**
+   
+   **Option 1: Using winget (Recommended)**
+   ```powershell
+   winget install GnuWin32.Make
+   ```
+   
+   **Option 2: Using Chocolatey**
    ```powershell
    choco install make
-   # Or download from: http://gnuwin32.sourceforge.net/packages/make.htm
    ```
+   
+   **Option 3: Manual Download**
+   - Download from: http://gnuwin32.sourceforge.net/packages/make.htm
+   
+   **Important: Add to PATH**
+   After installation, add GNU Make to your PATH:
+   ```powershell
+   # Add to PATH (one-time setup)
+   $env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
+   
+   # Make it permanent
+   [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files (x86)\GnuWin32\bin", [EnvironmentVariableTarget]::User)
+   
+   # Verify installation
+   make --version
+   ```
+   
+   **Note:** After adding to PATH, restart PowerShell or run the $env:Path command in your current session.
 
 ### Step 2: Extract Source Code
 
@@ -317,6 +341,28 @@ Remove-Item proxy.log
 
 **Warning: "ignoring '#pragma comment'"**
 - Safe to ignore (pragma is for MSVC)
+
+### Makefile Errors
+
+**Error: "make: The term 'make' is not recognized"**
+- GNU Make is not installed or not in PATH
+- Solution:
+  ```powershell
+  # Check if Make is installed
+  winget install GnuWin32.Make
+  
+  # Add to PATH for current session
+  $env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
+  
+  # Verify
+  make --version
+  ```
+
+**Error: "process_begin: CreateProcess(NULL, echo., ...) failed"**
+- This error occurs with older GnuWin32 Make versions (3.81)
+- The Makefile has been updated to be compatible (removed `@echo.` commands)
+- If you have an older version of the Makefile, it has been fixed
+- Pull latest version from repository or use manual compilation as fallback
 
 ### Runtime Errors
 
