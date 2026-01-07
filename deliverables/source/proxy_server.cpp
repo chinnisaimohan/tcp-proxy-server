@@ -463,6 +463,19 @@ void handleClient(SOCKET clientSocket, const vector<string>& blockedDomains) {
         return;
     }
     
+    // Check for recursive proxy loop (prevent connecting to ourselves)
+    if ((request.host == "127.0.0.1" || request.host == "localhost") && request.port == PROXY_PORT) {
+        logMessage("✗ Recursive proxy loop detected: " + request.host + ":" + to_string(request.port));
+        sendResponse(clientSocket, 508, "Loop Detected",
+            "<html><head><title>508 Loop Detected</title></head>"
+            "<body><h1>508 Loop Detected</h1>"
+            "<p>Recursive proxy loop prevented. Target " + request.host + ":" + to_string(request.port) + 
+            " is this proxy server.</p></body></html>");
+        closesocket(clientSocket);
+        activeThreads--;
+        return;
+    }
+    
     // Check if domain is blocked
     if (isDomainBlocked(request.host, blockedDomains)) {
         logMessage("✗ Domain BLOCKED: " + request.host);
