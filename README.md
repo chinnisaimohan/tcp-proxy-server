@@ -523,13 +523,25 @@ make --version
 
 For permanent PATH configuration, see [BUILD_INSTRUCTIONS.md](BUILD_INSTRUCTIONS.md).
 
-### 6.2 Building from Source
+### 6.2 Cloning the Repository
+
+First, clone the project from GitHub:
+
+```powershell
+# Clone the repository
+git clone https://github.com/chinnisaimohan/tcp-proxy-server.git
+
+# Navigate into the project directory
+cd tcp-proxy-server
+```
+
+### 6.3 Building from Source
 
 #### Option 1: Using Makefile (Recommended)
 
 ```powershell
-# Navigate to project directory
-cd "C:\Users\Admin\Desktop\tcp-proxy-server"
+# Add Make to PATH if needed
+$env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
 
 # Build all components
 make all
@@ -559,7 +571,7 @@ g++ src\test_edge_cases.cpp -o bin\test_edge_cases.exe -lws2_32 -std=c++17 -Wall
 g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
 ```
 
-### 6.3 Running the Proxy Server
+### 6.4 Running the Proxy Server
 
 ```powershell
 # Start the proxy server
@@ -568,7 +580,7 @@ g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
 
 The server will start on `localhost:8888` and log activities to `proxy.log`.
 
-### 6.4 Configuring Domain Blocklist
+### 6.5 Configuring Domain Blocklist
 
 Edit `config/blocked_domains.txt`:
 
@@ -587,28 +599,28 @@ hulu.com
 
 Comments (`#`) and empty lines are supported.
 
-### 6.5 Client Configuration
+### 6.6 Client Configuration
 
-#### 6.5.1 Using with cURL
+#### 6.6.1 Using with cURL
 ```bash
 curl -x http://127.0.0.1:8888 http://example.com
 ```
 
-#### 6.5.2 Using with Web Browsers
+#### 6.6.2 Using with Web Browsers
 1. Open browser proxy settings
 2. Set HTTP proxy: `127.0.0.1`
 3. Set port: `8888`
 4. Save configuration
 
-#### 6.5.3 Using with PowerShell
+#### 6.6.3 Using with PowerShell
 ```powershell
 $env:HTTP_PROXY = "http://127.0.0.1:8888"
 Invoke-WebRequest -Uri "http://example.com"
 ```
 
-### 6.6 Running Tests
+### 6.7 Running Tests
 
-#### 6.6.1 Prerequisites - Start Proxy Server First
+#### 6.7.1 Prerequisites - Start Proxy Server First
 
 **IMPORTANT:** Before running any tests, the proxy server must be running in a separate terminal.
 
@@ -636,7 +648,7 @@ Start-Sleep -Seconds 3
 .\test_suite.ps1
 ```
 
-#### 6.6.2 Test Suites
+#### 6.7.2 Test Suites
 
 ```powershell
 # Run all basic functionality tests (16 tests: forwarding, filtering, errors, large transfers, concurrent)
