@@ -601,21 +601,68 @@ Comments (`#`) and empty lines are supported.
 
 ### 6.6 Client Configuration
 
+**How it works:** Your client sends requests to the proxy server, which forwards them to the destination and streams the response back to you.
+
+```
+Client → Proxy Server (127.0.0.1:8888) → Target Server → Response Back to Client
+```
+
 #### 6.6.1 Using with cURL
 
 **On Windows PowerShell (Recommended):**
 ```powershell
 # Use curl.exe (NOT curl) - PowerShell aliases 'curl' to Invoke-WebRequest
 curl.exe -x http://127.0.0.1:8888 http://example.com
+```
 
-# Test blocked domain
+**What you'll see (Client receives HTML response):**
+```html
+<!doctype html>
+<html>
+<head>
+    <title>Example Domain</title>
+...
+</html>
+```
+
+**Test blocked domain:**
+```powershell
 curl.exe -x http://127.0.0.1:8888 http://facebook.com
+```
 
-# POST request
+**What you'll see (Client receives 403 error):**
+```html
+<html><head><title>403 Forbidden</title></head>
+<body><h1>403 Forbidden</h1>
+<p>Access to facebook.com is blocked by proxy policy.</p></body></html>
+```
+
+**Test POST request:**
+```powershell
 curl.exe -x http://127.0.0.1:8888 -X POST -d "name=test" http://httpbin.org/post
+```
 
-# Test loop detection
+**What you'll see (Client receives JSON response):**
+```json
+{
+  "data": "name=test",
+  "headers": {
+    "Host": "httpbin.org",
+    ...
+  }
+}
+```
+
+**Test loop detection:**
+```powershell
 curl.exe -x http://127.0.0.1:8888 http://127.0.0.1:8888/test
+```
+
+**What you'll see (Client receives 508 error):**
+```html
+<html><head><title>508 Loop Detected</title></head>
+<body><h1>508 Loop Detected</h1>
+<p>Recursive proxy loop prevented. Target 127.0.0.1:8888 is this proxy server.</p></body></html>
 ```
 
 **On Linux/macOS or Git Bash:**
@@ -625,11 +672,17 @@ curl -x http://127.0.0.1:8888 http://example.com
 
 **Important:** In PowerShell, always use `curl.exe` instead of `curl`. PowerShell has a built-in alias where `curl` points to `Invoke-WebRequest`, which doesn't support the `-x` proxy flag. Using `curl.exe` forces PowerShell to use the actual curl executable.
 
+---
+
 #### 6.6.2 Using with Web Browsers
 1. Open browser proxy settings
 2. Set HTTP proxy: `127.0.0.1`
 3. Set port: `8888`
 4. Save configuration
+
+**What you'll see:** All browser requests go through the proxy. Blocked sites show 403 Forbidden page.
+
+---
 
 #### 6.6.3 Using with PowerShell (Native Method)
 ```powershell
@@ -641,7 +694,23 @@ $env:HTTP_PROXY = "http://127.0.0.1:8888"
 Invoke-WebRequest -Uri "http://example.com"
 
 # Test blocked domain (will throw 403 error)
-Invoke-WebRequest -Uri "http://facebook.com" -Proxy "http://127.0.0.1:8888"
+try {
+    Invoke-WebRequest -Uri "http://facebook.com" -Proxy "http://127.0.0.1:8888"
+} catch {
+    Write-Host "Error: $_" -ForegroundColor Red
+}
+```
+
+**What you'll see (successful request):**
+```
+StatusCode        : 200
+StatusDescription : OK
+Content           : <!doctype html><html>...
+```
+
+**What you'll see (blocked domain):**
+```
+Invoke-WebRequest : The remote server returned an error: (403) Forbidden.
 ```
 
 ### 6.7 Running Tests
