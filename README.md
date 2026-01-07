@@ -672,6 +672,39 @@ curl -x http://127.0.0.1:8888 http://example.com
 
 **Important:** In PowerShell, always use `curl.exe` instead of `curl`. PowerShell has a built-in alias where `curl` points to `Invoke-WebRequest`, which doesn't support the `-x` proxy flag. Using `curl.exe` forces PowerShell to use the actual curl executable.
 
+**To see full response details (headers + body):**
+```powershell
+# Show response headers and body
+curl.exe -x http://127.0.0.1:8888 -i http://example.com
+```
+
+**Client receives complete HTTP response packet:**
+```http
+HTTP/1.1 200 OK
+Age: 318081
+Cache-Control: max-age=604800
+Content-Type: text/html; charset=UTF-8
+Date: Tue, 07 Jan 2026 12:30:45 GMT
+Etag: "3147526947+ident"
+Expires: Tue, 14 Jan 2026 12:30:45 GMT
+Last-Modified: Thu, 17 Oct 2019 07:18:26 GMT
+Server: ECS (dcb/7EA2)
+Vary: Accept-Encoding
+X-Cache: HIT
+Content-Length: 1256
+
+<!doctype html>
+<html>
+<head>
+    <title>Example Domain</title>
+    ...
+</head>
+<body>
+...
+</body>
+</html>
+```
+
 ---
 
 #### 6.6.2 Using with Web Browsers
@@ -685,32 +718,77 @@ curl -x http://127.0.0.1:8888 http://example.com
 ---
 
 #### 6.6.3 Using with PowerShell (Native Method)
+
+**Method 1: Using -Proxy parameter (captures full response):**
 ```powershell
-# Method 1: Using -Proxy parameter (recommended)
-Invoke-WebRequest -Uri "http://example.com" -Proxy "http://127.0.0.1:8888"
+# Send request through proxy and capture response
+$response = Invoke-WebRequest -Uri "http://example.com" -Proxy "http://127.0.0.1:8888"
 
-# Method 2: Using environment variable
-$env:HTTP_PROXY = "http://127.0.0.1:8888"
-Invoke-WebRequest -Uri "http://example.com"
+# Display response details
+Write-Host "Status Code: $($response.StatusCode)" -ForegroundColor Green
+Write-Host "Content Length: $($response.Content.Length) bytes" -ForegroundColor Green
+Write-Host "`nResponse Headers:" -ForegroundColor Cyan
+$response.Headers | Format-Table
 
-# Test blocked domain (will throw 403 error)
+Write-Host "`nResponse Body (first 200 chars):" -ForegroundColor Cyan
+$response.Content.Substring(0, 200)
+```
+
+**Client receives and displays:**
+```
+Status Code: 200
+Content Length: 1256 bytes
+
+Response Headers:
+
+Key              Value
+---              -----
+Content-Type     {text/html; charset=UTF-8}
+Date             {Tue, 07 Jan 2026 12:30:45 GMT}
+Server           {ECS (dcb/7EA2)}
+Content-Length   {1256}
+
+Response Body (first 200 chars):
+<!doctype html>
+<html>
+<head>
+    <title>Example Domain</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+...
+```
+
+**Method 2: Test blocked domain (captures error response):**
+```powershell
 try {
-    Invoke-WebRequest -Uri "http://facebook.com" -Proxy "http://127.0.0.1:8888"
+    $response = Invoke-WebRequest -Uri "http://facebook.com" -Proxy "http://127.0.0.1:8888"
 } catch {
-    Write-Host "Error: $_" -ForegroundColor Red
+    Write-Host "HTTP Status: $($_.Exception.Response.StatusCode.value__)" -ForegroundColor Red
+    Write-Host "Error: $($_.Exception.Message)" -ForegroundColor Red
+    
+    # Read the error response body
+    $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+    $responseBody = $reader.ReadToEnd()
+    Write-Host "`nServer Response:" -ForegroundColor Yellow
+    Write-Host $responseBody
 }
 ```
 
-**What you'll see (successful request):**
+**Client receives blocked response:**
 ```
-StatusCode        : 200
-StatusDescription : OK
-Content           : <!doctype html><html>...
+HTTP Status: 403
+Error: The remote server returned an error: (403) Forbidden.
+
+Server Response:
+<html><head><title>403 Forbidden</title></head>
+<body><h1>403 Forbidden</h1>
+<p>Access to facebook.com is blocked by proxy policy.</p></body></html>
 ```
 
-**What you'll see (blocked domain):**
-```
-Invoke-WebRequest : The remote server returned an error: (403) Forbidden.
+**Method 3: Using environment variable:**
+```powershell
+$env:HTTP_PROXY = "http://127.0.0.1:8888"
+Invoke-WebRequest -Uri "http://example.com"
 ```
 
 ### 6.7 Running Tests
