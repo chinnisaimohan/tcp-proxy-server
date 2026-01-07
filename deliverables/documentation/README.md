@@ -666,6 +666,118 @@ Start-Sleep -Seconds 3
 - Server terminal displays connection logs and request handling
 - All tests should pass when server is running correctly
 
+### 6.8 Common Issues and Troubleshooting
+
+#### Issue 1: "make: The term 'make' is not recognized"
+
+**Problem:** GNU Make is not in your system PATH.
+
+**Solution:**
+```powershell
+# Add Make to PATH for current session
+$env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
+
+# Verify
+make --version
+```
+
+For permanent fix, see Section 6.1 (Installing GNU Make).
+
+---
+
+#### Issue 2: ".\bin\test_stress.exe is not recognized"
+
+**Problem:** Test executables haven't been built yet.
+
+**Solution:**
+```powershell
+# Build all executables including tests
+make all
+
+# Or build only test executables
+make tests
+
+# Or manually compile
+g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
+```
+
+**Note:** `make server` only builds the proxy server, not the test clients.
+
+---
+
+#### Issue 3: All Tests Failing (Connection Refused)
+
+**Problem:** Proxy server is not running.
+
+**Solution:**
+```powershell
+# Start proxy server in a separate terminal FIRST
+.\bin\proxy_server.exe
+
+# Then run tests in another terminal
+.\bin\test_stress.exe
+.\test_suite.ps1
+```
+
+**Automated approach:**
+```powershell
+# Start server in background
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "$(Get-Location)"; .\bin\proxy_server.exe'
+
+# Wait for server to start
+Start-Sleep -Seconds 2
+
+# Run tests
+.\bin\test_stress.exe
+```
+
+---
+
+#### Issue 4: "Address already in use" / "Bind failed"
+
+**Problem:** Port 8888 is already in use by another proxy server instance.
+
+**Solution:**
+```powershell
+# Find and kill existing proxy server
+Get-Process proxy_server -ErrorAction SilentlyContinue | Stop-Process -Force
+
+# Or check what's using port 8888
+netstat -ano | findstr :8888
+```
+
+---
+
+#### Issue 5: Build Warnings About '#pragma comment'
+
+**Problem:** MinGW doesn't recognize MSVC-specific `#pragma comment`.
+
+**Solution:** These warnings are **safe to ignore**. The linker flag `-lws2_32` already links Winsock2.
+
+```
+src/proxy_server.cpp:53: warning: ignoring '#pragma comment ' [-Wunknown-pragmas]
+   53 | #pragma comment(lib, "ws2_32.lib")
+```
+
+---
+
+#### Issue 6: Tests Pass Locally But Fail After Cloning
+
+**Problem:** Missing the updated Makefile or haven't rebuilt after cloning.
+
+**Solution:**
+```powershell
+# Pull latest changes
+git pull origin main
+
+# Clean and rebuild everything
+make clean
+make all
+
+# Verify all executables exist
+dir bin
+```
+
 ---
 
 ## 7. Limitations and Future Work
