@@ -602,9 +602,28 @@ Comments (`#`) and empty lines are supported.
 ### 6.6 Client Configuration
 
 #### 6.6.1 Using with cURL
+
+**On Windows PowerShell (Recommended):**
+```powershell
+# Use curl.exe (NOT curl) - PowerShell aliases 'curl' to Invoke-WebRequest
+curl.exe -x http://127.0.0.1:8888 http://example.com
+
+# Test blocked domain
+curl.exe -x http://127.0.0.1:8888 http://facebook.com
+
+# POST request
+curl.exe -x http://127.0.0.1:8888 -X POST -d "name=test" http://httpbin.org/post
+
+# Test loop detection
+curl.exe -x http://127.0.0.1:8888 http://127.0.0.1:8888/test
+```
+
+**On Linux/macOS or Git Bash:**
 ```bash
 curl -x http://127.0.0.1:8888 http://example.com
 ```
+
+**Important:** In PowerShell, always use `curl.exe` instead of `curl`. PowerShell has a built-in alias where `curl` points to `Invoke-WebRequest`, which doesn't support the `-x` proxy flag. Using `curl.exe` forces PowerShell to use the actual curl executable.
 
 #### 6.6.2 Using with Web Browsers
 1. Open browser proxy settings
@@ -612,10 +631,17 @@ curl -x http://127.0.0.1:8888 http://example.com
 3. Set port: `8888`
 4. Save configuration
 
-#### 6.6.3 Using with PowerShell
+#### 6.6.3 Using with PowerShell (Native Method)
 ```powershell
+# Method 1: Using -Proxy parameter (recommended)
+Invoke-WebRequest -Uri "http://example.com" -Proxy "http://127.0.0.1:8888"
+
+# Method 2: Using environment variable
 $env:HTTP_PROXY = "http://127.0.0.1:8888"
 Invoke-WebRequest -Uri "http://example.com"
+
+# Test blocked domain (will throw 403 error)
+Invoke-WebRequest -Uri "http://facebook.com" -Proxy "http://127.0.0.1:8888"
 ```
 
 ### 6.7 Running Tests
@@ -761,7 +787,26 @@ src/proxy_server.cpp:53: warning: ignoring '#pragma comment ' [-Wunknown-pragmas
 
 ---
 
-#### Issue 6: Tests Pass Locally But Fail After Cloning
+#### Issue 6: "curl -x" doesn't work in PowerShell
+
+**Problem:** `curl -x http://127.0.0.1:8888 http://example.com` throws "parameter name 'x' not found" error.
+
+**Cause:** In PowerShell, `curl` is an **alias** for `Invoke-WebRequest`, which doesn't support the `-x` flag.
+
+**Solution:**
+```powershell
+# Use curl.exe (the actual curl program)
+curl.exe -x http://127.0.0.1:8888 http://example.com
+
+# OR use PowerShell's native method
+Invoke-WebRequest -Uri "http://example.com" -Proxy "http://127.0.0.1:8888"
+```
+
+**Remember:** Always use `curl.exe` in PowerShell, not `curl`.
+
+---
+
+#### Issue 7: Tests Pass Locally But Fail After Cloning
 
 **Problem:** Missing the updated Makefile or haven't rebuilt after cloning.
 
