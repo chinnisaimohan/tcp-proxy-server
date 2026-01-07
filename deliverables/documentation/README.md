@@ -610,12 +610,17 @@ Client → Proxy Server (127.0.0.1:8888) → Target Server → Response Back to 
 #### 6.6.1 Using with cURL
 
 **On Windows PowerShell (Recommended):**
+
+**Important:** In PowerShell, always use `curl.exe` instead of `curl`. PowerShell has a built-in alias where `curl` points to `Invoke-WebRequest`, which doesn't support the `-x` proxy flag. Using `curl.exe` forces PowerShell to use the actual curl executable.
+
+**Basic Examples:**
+
 ```powershell
-# Use curl.exe (NOT curl) - PowerShell aliases 'curl' to Invoke-WebRequest
+# 1. Simple GET request through proxy
 curl.exe -x http://127.0.0.1:8888 http://example.com
 ```
 
-**What you'll see (Client receives HTML response):**
+**Client receives HTML response:**
 ```html
 <!doctype html>
 <html>
@@ -625,56 +630,43 @@ curl.exe -x http://127.0.0.1:8888 http://example.com
 </html>
 ```
 
-**Test blocked domain:**
 ```powershell
-curl.exe -x http://127.0.0.1:8888 http://facebook.com
+# 2. GET request with verbose output (shows connection details)
+curl.exe -x http://127.0.0.1:8888 -v http://example.com
 ```
 
-**What you'll see (Client receives 403 error):**
-```html
-<html><head><title>403 Forbidden</title></head>
-<body><h1>403 Forbidden</h1>
-<p>Access to facebook.com is blocked by proxy policy.</p></body></html>
+**Client sees connection details:**
+```
+* Trying 127.0.0.1:8888...
+* Connected to 127.0.0.1 (127.0.0.1) port 8888
+> GET http://example.com/ HTTP/1.1
+> Host: example.com
+> User-Agent: curl/8.0.1
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+< HTTP/1.1 200 OK
+< Content-Type: text/html; charset=UTF-8
+< Content-Length: 1256
+...
 ```
 
-**Test POST request:**
 ```powershell
-curl.exe -x http://127.0.0.1:8888 -X POST -d "name=test" http://httpbin.org/post
+# 3. Show only response headers (useful for debugging)
+curl.exe -x http://127.0.0.1:8888 -I http://example.com
 ```
 
-**What you'll see (Client receives JSON response):**
-```json
-{
-  "data": "name=test",
-  "headers": {
-    "Host": "httpbin.org",
-    ...
-  }
-}
+**Client receives headers only:**
+```http
+HTTP/1.1 200 OK
+Age: 318081
+Cache-Control: max-age=604800
+Content-Type: text/html; charset=UTF-8
+Date: Tue, 07 Jan 2026 12:30:45 GMT
+Content-Length: 1256
 ```
 
-**Test loop detection:**
 ```powershell
-curl.exe -x http://127.0.0.1:8888 http://127.0.0.1:8888/test
-```
-
-**What you'll see (Client receives 508 error):**
-```html
-<html><head><title>508 Loop Detected</title></head>
-<body><h1>508 Loop Detected</h1>
-<p>Recursive proxy loop prevented. Target 127.0.0.1:8888 is this proxy server.</p></body></html>
-```
-
-**On Linux/macOS or Git Bash:**
-```bash
-curl -x http://127.0.0.1:8888 http://example.com
-```
-
-**Important:** In PowerShell, always use `curl.exe` instead of `curl`. PowerShell has a built-in alias where `curl` points to `Invoke-WebRequest`, which doesn't support the `-x` proxy flag. Using `curl.exe` forces PowerShell to use the actual curl executable.
-
-**To see full response details (headers + body):**
-```powershell
-# Show response headers and body
+# 4. Show headers AND body together
 curl.exe -x http://127.0.0.1:8888 -i http://example.com
 ```
 
@@ -704,6 +696,174 @@ Content-Length: 1256
 </body>
 </html>
 ```
+
+```powershell
+# 5. Save response to file
+curl.exe -x http://127.0.0.1:8888 http://example.com -o output.html
+```
+
+**Client saves HTML to output.html:**
+```
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1256  100  1256    0     0  12560      0 --:--:-- --:--:-- --:--:-- 12560
+```
+
+```powershell
+# 6. Follow redirects automatically
+curl.exe -x http://127.0.0.1:8888 -L http://github.com
+```
+
+**Client follows 301/302 redirects:**
+```html
+<!-- Final destination content after following redirects -->
+```
+
+**Advanced Examples:**
+
+```powershell
+# 7. POST request with form data
+curl.exe -x http://127.0.0.1:8888 -X POST -d "name=test&value=123" http://httpbin.org/post
+```
+
+**Client receives JSON response:**
+```json
+{
+  "data": "name=test&value=123",
+  "form": {
+    "name": "test",
+    "value": "123"
+  },
+  "headers": {
+    "Host": "httpbin.org",
+    "Content-Type": "application/x-www-form-urlencoded"
+  }
+}
+```
+
+```powershell
+# 8. POST JSON data
+curl.exe -x http://127.0.0.1:8888 -X POST -H "Content-Type: application/json" -d "{\"key\":\"value\"}" http://httpbin.org/post
+```
+
+**Client receives:**
+```json
+{
+  "data": "{\"key\":\"value\"}",
+  "json": {
+    "key": "value"
+  },
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}
+```
+
+```powershell
+# 9. Custom headers
+curl.exe -x http://127.0.0.1:8888 -H "User-Agent: MyCustomAgent/1.0" -H "Accept: application/json" http://httpbin.org/headers
+```
+
+**Client receives:**
+```json
+{
+  "headers": {
+    "Accept": "application/json",
+    "Host": "httpbin.org",
+    "User-Agent": "MyCustomAgent/1.0"
+  }
+}
+```
+
+```powershell
+# 10. PUT request (upload data)
+curl.exe -x http://127.0.0.1:8888 -X PUT -d "updated data" http://httpbin.org/put
+```
+
+**Client receives:**
+```json
+{
+  "data": "updated data",
+  "headers": {
+    "Content-Type": "application/x-www-form-urlencoded"
+  }
+}
+```
+
+```powershell
+# 11. DELETE request
+curl.exe -x http://127.0.0.1:8888 -X DELETE http://httpbin.org/delete
+```
+
+**Client receives:**
+```json
+{
+  "data": "",
+  "headers": {
+    "Host": "httpbin.org"
+  }
+}
+```
+
+**Testing Proxy Features:**
+
+```powershell
+# 12. Test blocked domain (returns 403)
+curl.exe -x http://127.0.0.1:8888 http://facebook.com
+```
+
+**Client receives 403 error:**
+```html
+<html><head><title>403 Forbidden</title></head>
+<body><h1>403 Forbidden</h1>
+<p>Access to facebook.com is blocked by proxy policy.</p></body></html>
+```
+
+```powershell
+# 13. Test loop detection (returns 508)
+curl.exe -x http://127.0.0.1:8888 http://127.0.0.1:8888/test
+```
+
+**Client receives 508 error:**
+```html
+<html><head><title>508 Loop Detected</title></head>
+<body><h1>508 Loop Detected</h1>
+<p>Recursive proxy loop prevented. Target 127.0.0.1:8888 is this proxy server.</p></body></html>
+```
+
+```powershell
+# 14. Test localhost loop detection
+curl.exe -x http://127.0.0.1:8888 http://localhost:8888/recursive
+```
+
+**Client receives 508 error:**
+```html
+<html><head><title>508 Loop Detected</title></head>
+<body><h1>508 Loop Detected</h1>
+<p>Recursive proxy loop prevented. Target localhost:8888 is this proxy server.</p></body></html>
+```
+
+```powershell
+# 15. Test HTTPS website (will fail - proxy is HTTP only)
+curl.exe -x http://127.0.0.1:8888 https://example.com
+```
+
+**Client receives connection error:**
+```
+curl: (56) Received HTTP code 400 from proxy after CONNECT
+```
+
+**On Linux/macOS or Git Bash:**
+```bash
+# All the above commands work, just use 'curl' instead of 'curl.exe'
+curl -x http://127.0.0.1:8888 http://example.com
+curl -x http://127.0.0.1:8888 -v http://example.com
+curl -x http://127.0.0.1:8888 -I http://example.com
+# ... etc
+```
+
+**Client receives complete HTTP response packet:**
+**Note about example.com:** This is a special domain reserved by IANA (Internet Assigned Numbers Authority) specifically for documentation and testing purposes. It's safe to use in examples and always returns a simple HTML page. Other test domains include `example.org`, `example.net`, and `httpbin.org` (for testing HTTP methods).
 
 ---
 
