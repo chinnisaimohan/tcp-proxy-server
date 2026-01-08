@@ -106,6 +106,51 @@ void logMessage(const string& message) {
     }
 }
 
+// Structured log entry for traffic logging (REQUIRED FOR DELIVERABLE)
+void logTrafficEntry(const string& clientIP, int clientPort,
+                     const string& targetHost, int targetPort,
+                     const string& requestLine,
+                     const string& action,
+                     int statusCode = 0,
+                     int bytesTransferred = 0) {
+    lock_guard<mutex> lock(logMutex);
+    
+    // Get current timestamp
+    time_t now = time(nullptr);
+    char timeStr[100];
+    strftime(timeStr, sizeof(timeStr), "%Y-%m-%d %H:%M:%S", localtime(&now));
+    
+    // Build structured log entry
+    ostringstream logEntry;
+    logEntry << "========================================\n";
+    logEntry << "[TRAFFIC LOG]\n";
+    logEntry << "Timestamp: " << timeStr << "\n";
+    logEntry << "Client: " << clientIP << ":" << clientPort << "\n";
+    logEntry << "Destination: " << targetHost << ":" << targetPort << "\n";
+    logEntry << "Request: " << requestLine << "\n";
+    logEntry << "Action: " << action << "\n";
+    if (statusCode > 0) {
+        logEntry << "Status Code: " << statusCode << "\n";
+    }
+    if (bytesTransferred > 0) {
+        logEntry << "Bytes Transferred: " << bytesTransferred << "\n";
+    }
+    logEntry << "========================================\n\n";
+    
+    string logStr = logEntry.str();
+    
+    // Console output
+    cout << logStr;
+    
+    // File output (CRITICAL: Write to log file)
+    lock_guard<mutex> fileLock(fileMutex);
+    ofstream logFile(LOG_FILE, ios::app);
+    if (logFile.is_open()) {
+        logFile << logStr;
+        logFile.close();
+    }
+}
+
 // Load blocked domains from file
 vector<string> loadBlockedDomains() {
     vector<string> blockedDomains;
@@ -312,7 +357,15 @@ SOCKET connectToServer(const string& host, int port) {
 }
 
 // Forward request and stream response back
-bool forwardRequestAndStreamResponse(SOCKET clientSocket, const HTTPRequest& request) {
+struct ForwardResult {
+    bool success;
+    int statusCode;
+    int bytesTransferred;
+};
+
+ForwardResult forwardRequestAndStreamResponse(SOCKET clientSocket, const HTTPRequest& request) {
+    ForwardResult result = {false, 502, 0};
+    
     // Connect to target server
     SOCKET serverSocket = connectToServer(request.host, request.port);
     if (serverSocket == INVALID_SOCKET) {
@@ -320,7 +373,7 @@ bool forwardRequestAndStreamResponse(SOCKET clientSocket, const HTTPRequest& req
             "<html><head><title>502 Bad Gateway</title></head>"
             "<body><h1>502 Bad Gateway</h1>"
             "<p>Could not connect to " + request.host + "</p></body></html>");
-        return false;
+        return result;
     }
     
     // Reconstruct and forward the request
@@ -341,7 +394,7 @@ bool forwardRequestAndStreamResponse(SOCKET clientSocket, const HTTPRequest& req
             "<html><head><title>502 Bad Gateway</title></head>"
             "<body><h1>502 Bad Gateway</h1>"
             "<p>Failed to send request to " + request.host + "</p></body></html>");
-        return false;
+        return result;
     }
     
     logMessage("✓ Forwarded " + to_string(sent) + " bytes to " + request.host);
@@ -356,8 +409,26 @@ bool forwardRequestAndStreamResponse(SOCKET clientSocket, const HTTPRequest& req
     char buffer[BUFFER_SIZE];
     int totalReceived = 0;
     int bytesReceived;
+    int extractedStatusCode = 200; // Default to 200 OK
     
+    bool firstChunk = true;
     while ((bytesReceived = recv(serverSocket, buffer, BUFFER_SIZE, 0)) > 0) {
+        // Extract status code from first chunk
+        if (firstChunk && bytesReceived > 12) {
+            string responseStart(buffer, min(bytesReceived, 100));
+            if (responseStart.find("HTTP/1.") == 0) {
+                size_t codePos = responseStart.find(' ');
+                if (codePos != string::npos && codePos + 4 < responseStart.length()) {
+                    try {
+                        extractedStatusCode = stoi(responseStart.substr(codePos + 1, 3));
+                    } catch (...) {
+                        extractedStatusCode = 200;
+                    }
+                }
+            }
+            firstChunk = false;
+        }
+        
         send(clientSocket, buffer, bytesReceived, 0);
         totalReceived += bytesReceived;
     }
@@ -365,13 +436,24 @@ bool forwardRequestAndStreamResponse(SOCKET clientSocket, const HTTPRequest& req
     closesocket(serverSocket);
     logMessage("✓ Streamed " + to_string(totalReceived) + " bytes from " + request.host + " to client");
     
-    return true;
+    result.success = true;
+    result.statusCode = extractedStatusCode;
+    result.bytesTransferred = totalReceived;
+    return result;
 }
 
 // Handle individual client connection (runs in separate thread)
 void handleClient(SOCKET clientSocket, const vector<string>& blockedDomains) {
     activeThreads++;
     int requestId = ++totalRequests;
+    
+    // Get client address information
+    sockaddr_in clientAddr;
+    int addrLen = sizeof(clientAddr);
+    getpeername(clientSocket, (sockaddr*)&clientAddr, &addrLen);
+    char clientIP[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, INET_ADDRSTRLEN);
+    int clientPort = ntohs(clientAddr.sin_port);
     
     logMessage("=== New client connection [Request #" + to_string(requestId) + "] ===");
     
@@ -479,6 +561,15 @@ void handleClient(SOCKET clientSocket, const vector<string>& blockedDomains) {
     // Check if domain is blocked
     if (isDomainBlocked(request.host, blockedDomains)) {
         logMessage("✗ Domain BLOCKED: " + request.host);
+        
+        // LOG STRUCTURED ENTRY FOR BLOCKED REQUEST
+        string requestLine = request.method + " " + request.url + " " + request.httpVersion;
+        logTrafficEntry(clientIP, clientPort,
+                       request.host, request.port,
+                       requestLine,
+                       "BLOCKED",
+                       403, 0);
+        
         sendResponse(clientSocket, 403, "Forbidden",
             "<html><head><title>403 Forbidden</title></head>"
             "<body><h1>403 Forbidden</h1>"
@@ -491,7 +582,15 @@ void handleClient(SOCKET clientSocket, const vector<string>& blockedDomains) {
     logMessage("✓ Domain ALLOWED: " + request.host);
     
     // Forward request to target server
-    forwardRequestAndStreamResponse(clientSocket, request);
+    ForwardResult result = forwardRequestAndStreamResponse(clientSocket, request);
+    
+    // LOG STRUCTURED ENTRY FOR ALLOWED REQUEST
+    string requestLine = request.method + " " + request.url + " " + request.httpVersion;
+    logTrafficEntry(clientIP, clientPort,
+                   request.host, request.port,
+                   requestLine,
+                   "ALLOWED",
+                   result.statusCode, result.bytesTransferred);
     
     // Cleanup
     closesocket(clientSocket);

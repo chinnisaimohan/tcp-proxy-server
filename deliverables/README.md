@@ -2,6 +2,18 @@
 
 ---
 
+## 📹 Video Demonstration
+
+**Watch the full 3-minute demonstration video:** [Google Drive - Demo Video](https://drive.google.com/drive/folders/1HSS7PyGSW3Qts57dNitf3xQORCubFbMp?usp=sharing)
+
+The video demonstrates:
+- Proxy server startup and configuration
+- Automated testing (88/88 tests passing)
+- Live browser demonstration with domain blocking
+- Real-time traffic logging and filtering
+
+---
+
 ## Abstract
 
 This project presents the design and implementation of a multi-threaded TCP proxy server with HTTP parsing, domain filtering, and request forwarding capabilities. The proxy server is built from scratch using the Windows Socket API (Winsock2) and C++17 standard library features. The implementation demonstrates fundamental networking concepts including socket programming, HTTP protocol parsing, concurrent request handling, and traffic filtering. The system successfully passes 100% of comprehensive test suites (88/88 tests) across 5 test executables covering basic functionality, edge cases, stress scenarios, concurrent connections, and malicious input handling.

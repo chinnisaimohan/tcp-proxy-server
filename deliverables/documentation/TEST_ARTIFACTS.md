@@ -10,6 +10,7 @@
 6. [Manual Testing Guide](#manual-testing-guide)
 7. [Test Results](#test-results)
 8. [Sample Test Logs](#sample-test-logs)
+9. [Traffic Logging Verification](#traffic-logging-verification)
 
 ---
 
@@ -742,6 +743,148 @@ grep -i "FAIL" logs/*.log
 
 ---
 
-*Test Documentation Version: 1.0*  
-*Last Updated: January 2, 2025*  
-*Total Test Coverage: 87 tests*
+## 9. Traffic Logging Verification
+
+### 9.1 Log File Requirements
+
+The proxy server generates a **`proxy.log`** file that records all traffic with structured data:
+
+**Required Fields Per Entry:**
+- ✓ Timestamp (YYYY-MM-DD HH:MM:SS)
+- ✓ Client Details (IP:Port)
+- ✓ Destination (Host:Port)
+- ✓ Request Line (METHOD URL HTTP/VERSION)
+- ✓ Action (ALLOWED/BLOCKED)
+- ✓ Status Code (HTTP response code)
+- ✓ Bytes Transferred (data size)
+
+### 9.2 Sample Log Verification
+
+**Test Command:**
+```powershell
+# Make a test request
+curl -x http://localhost:8888 http://example.com/
+
+# Verify log entry was created
+Get-Content proxy.log -Tail 15
+```
+
+**Expected Output in `proxy.log`:**
+```
+========================================
+[TRAFFIC LOG]
+Timestamp: 2026-01-08 14:30:20
+Client: 127.0.0.1:52341
+Destination: example.com:80
+Request: GET http://example.com/ HTTP/1.1
+Action: ALLOWED
+Status Code: 200
+Bytes Transferred: 1256
+========================================
+```
+
+### 9.3 Log Validation Tests
+
+**Test 1: Verify Allowed Request Logging**
+```powershell
+# Clear existing log
+Remove-Item proxy.log -ErrorAction SilentlyContinue
+
+# Make allowed request
+curl -x http://localhost:8888 http://example.com/
+
+# Verify log entry
+if (Select-String -Path proxy.log -Pattern "Action: ALLOWED") {
+    Write-Host "✓ PASS: Allowed request logged correctly" -ForegroundColor Green
+} else {
+    Write-Host "✗ FAIL: Allowed request not logged" -ForegroundColor Red
+}
+```
+
+**Test 2: Verify Blocked Request Logging**
+```powershell
+# Make blocked request
+curl -x http://localhost:8888 http://facebook.com/
+
+# Verify log entry
+if (Select-String -Path proxy.log -Pattern "Action: BLOCKED") {
+    Write-Host "✓ PASS: Blocked request logged correctly" -ForegroundColor Green
+} else {
+    Write-Host "✗ FAIL: Blocked request not logged" -ForegroundColor Red
+}
+```
+
+**Test 3: Verify All Required Fields**
+```powershell
+# Check for all required fields in log
+$requiredFields = @(
+    "Timestamp:",
+    "Client:",
+    "Destination:",
+    "Request:",
+    "Action:",
+    "Status Code:",
+    "Bytes Transferred:"
+)
+
+$logContent = Get-Content proxy.log -Raw
+$allFieldsPresent = $true
+
+foreach ($field in $requiredFields) {
+    if ($logContent -notmatch [regex]::Escape($field)) {
+        Write-Host "✗ FAIL: Missing field: $field" -ForegroundColor Red
+        $allFieldsPresent = $false
+    }
+}
+
+if ($allFieldsPresent) {
+    Write-Host "✓ PASS: All required fields present in log" -ForegroundColor Green
+}
+```
+
+### 9.4 Log Analytics Queries
+
+**Count Total Requests:**
+```powershell
+(Select-String -Path proxy.log -Pattern "\[TRAFFIC LOG\]").Count
+```
+
+**Count Allowed vs Blocked:**
+```powershell
+$allowed = (Select-String -Path proxy.log -Pattern "Action: ALLOWED").Count
+$blocked = (Select-String -Path proxy.log -Pattern "Action: BLOCKED").Count
+Write-Host "Allowed: $allowed | Blocked: $blocked"
+```
+
+**Find Requests to Specific Domain:**
+```powershell
+Select-String -Path proxy.log -Pattern "Destination: example.com" -Context 0,6
+```
+
+**Calculate Total Bandwidth:**
+```powershell
+$bytes = (Select-String -Path proxy.log -Pattern "Bytes Transferred: (\d+)").Matches | 
+    ForEach-Object { [int]$_.Groups[1].Value } | 
+    Measure-Object -Sum
+Write-Host "Total Bytes Transferred: $($bytes.Sum)"
+```
+
+### 9.5 Sample Log File Location
+
+**File:** `deliverables/logs/sample_proxy_log.txt`
+
+This sample demonstrates:
+- ✓ Multiple concurrent requests with different thread IDs
+- ✓ Both allowed and blocked traffic
+- ✓ Various HTTP methods (GET, POST)
+- ✓ Different client addresses
+- ✓ Complete structured logging format
+- ✓ Status codes and bandwidth metrics
+
+**Documentation Reference:** See `deliverables/documentation/LOGGING.md` for complete logging specification.
+
+---
+
+*Test Documentation Version: 1.1*  
+*Last Updated: January 8, 2026*  
+*Total Test Coverage: 88 tests + Traffic Logging Verification*

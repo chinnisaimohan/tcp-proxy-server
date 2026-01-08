@@ -30,6 +30,12 @@ proxy.log
 !deliverables/logs/*.txt
 !deliverables/logs/*.log
 
+# Video files (too large for GitHub - use external hosting)
+*.mp4
+*.avi
+*.mov
+*.mkv
+
 # Test artifacts
 response.html
 

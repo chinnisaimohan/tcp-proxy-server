@@ -5,6 +5,14 @@
 
 ---
 
+## 📹 Recorded Demo Video
+
+**Full demonstration available at:** [Google Drive - Demo Video](https://drive.google.com/drive/folders/1HSS7PyGSW3Qts57dNitf3xQORCubFbMp?usp=sharing)
+
+This script provides the complete word-by-word narration used in the demonstration video.
+
+---
+
 ## **[0:00 - 0:25] INTRODUCTION (25 seconds)**
 
 **[Look at camera/audience]**
