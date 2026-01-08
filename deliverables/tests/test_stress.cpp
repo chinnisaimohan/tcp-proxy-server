@@ -351,14 +351,16 @@ void test_concurrent_connections() {
     vector<thread> threads;
     
     for (int i = 0; i < 20; i++) {
-        threads.push_back(thread([&successful]() {
-            string request = "GET http://httpbin.org/get HTTP/1.1\r\n"
-                           "Host: httpbin.org\r\n"
+        threads.push_back(thread([&successful, i]() {
+            // Use example.com for more reliable testing
+            string request = "GET http://example.com/ HTTP/1.1\r\n"
+                           "Host: example.com\r\n"
                            "Connection: close\r\n\r\n";
             string response;
-            if (sendToProxy(request, response) && response.find("200") != string::npos) {
+            if (sendToProxy(request, response, 5) && response.find("200") != string::npos) {
                 successful++;
             }
+            this_thread::sleep_for(chrono::milliseconds(50)); // Small delay
         }));
     }
     
