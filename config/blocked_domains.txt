@@ -15,6 +15,9 @@ twitter.com
 instagram.com
 tiktok.com
 
+# Testing/API sites
+httpbin.org
+
 # Video Streaming (for testing)
 youtube.com
 netflix.com
