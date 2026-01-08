@@ -9,20 +9,22 @@ LDFLAGS = -lws2_32
 
 # Directories
 SRC_DIR = src
-BIN_DIR = bin
+TEST_DIR = tests
+BUILD_DIR = build
 CONFIG_DIR = config
+SCRIPTS_DIR = scripts
 
 # Target executables
-PROXY_SERVER = $(BIN_DIR)/proxy_server.exe
-TEST_COMPREHENSIVE = $(BIN_DIR)/test_comprehensive.exe
-TEST_EDGE_CASES = $(BIN_DIR)/test_edge_cases.exe
-TEST_STRESS = $(BIN_DIR)/test_stress.exe
+PROXY_SERVER = $(BUILD_DIR)/proxy_server.exe
+TEST_COMPREHENSIVE = $(BUILD_DIR)/test_comprehensive.exe
+TEST_EDGE_CASES = $(BUILD_DIR)/test_edge_cases.exe
+TEST_STRESS = $(BUILD_DIR)/test_stress.exe
 
 # Source files
 PROXY_SRC = $(SRC_DIR)/proxy_server.cpp
-TEST_COMPREHENSIVE_SRC = $(SRC_DIR)/test_comprehensive.cpp
-TEST_EDGE_CASES_SRC = $(SRC_DIR)/test_edge_cases.cpp
-TEST_STRESS_SRC = $(SRC_DIR)/test_stress.cpp
+TEST_COMPREHENSIVE_SRC = $(TEST_DIR)/test_comprehensive.cpp
+TEST_EDGE_CASES_SRC = $(TEST_DIR)/test_edge_cases.cpp
+TEST_STRESS_SRC = $(TEST_DIR)/test_stress.cpp
 
 # Default target: build all
 .PHONY: all
@@ -35,7 +37,7 @@ all: $(PROXY_SERVER) $(TEST_COMPREHENSIVE) $(TEST_EDGE_CASES) $(TEST_STRESS)
 # Build proxy server
 $(PROXY_SERVER): $(PROXY_SRC)
 	@echo Building proxy server...
-	@if not exist $(BIN_DIR) mkdir $(BIN_DIR)
+	@if not exist $(BUILD_DIR) mkdir $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) $(PROXY_SRC) -o $(PROXY_SERVER) $(LDFLAGS)
 	@echo [OK] proxy_server.exe
 
@@ -77,29 +79,29 @@ test: all
 	@echo ========================================
 	@echo   RUNNING TEST SUITES
 	@echo ========================================
-	@powershell -Command ".\test_suite.ps1"
-	@powershell -Command ".\test_post_bodies.ps1"
+	@powershell -Command ".\$(SCRIPTS_DIR)\test_suite.ps1"
+	@powershell -Command ".\$(SCRIPTS_DIR)\test_post_bodies.ps1"
 	@$(TEST_STRESS)
 
 # Clean build artifacts
 .PHONY: clean
 clean:
 	@echo Cleaning build artifacts...
-	@if exist $(BIN_DIR)\*.exe del /Q $(BIN_DIR)\*.exe
+	@if exist $(BUILD_DIR)\*.exe del /Q $(BUILD_DIR)\*.exe
 	@if exist proxy.log del /Q proxy.log
 	@echo Clean complete!
 
 # Clean everything including logs
 .PHONY: distclean
 distclean: clean
-	@if exist $(BIN_DIR) rmdir /S /Q $(BIN_DIR)
+	@if exist $(BUILD_DIR) rmdir /S /Q $(BUILD_DIR)
 	@echo Deep clean complete!
 
 # Install (copy to system location - optional)
 .PHONY: install
 install: all
 	@echo Installation not implemented (Windows manual installation)
-	@echo Copy bin\proxy_server.exe to desired location
+	@echo Copy build\proxy_server.exe to desired location
 
 # Show help
 .PHONY: help

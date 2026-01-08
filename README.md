@@ -397,7 +397,7 @@ Three comprehensive test suites were developed:
 .\test_post_bodies.ps1
 
 # Stress & edge case tests
-.\bin\test_stress.exe
+.\\build\\test_stress.exe
 ```
 
 ---
@@ -563,19 +563,19 @@ $env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
 cd "C:\Users\Admin\Desktop\tcp-proxy-server"
 
 # Compile proxy server
-g++ src\proxy_server.cpp -o bin\proxy_server.exe -lws2_32 -std=c++17 -Wall
+g++ src\proxy_server.cpp -o build\proxy_server.exe -lws2_32 -std=c++17 -Wall
 
 # Compile test clients (optional)
-g++ src\test_comprehensive.cpp -o bin\test_comprehensive.exe -lws2_32 -std=c++17 -Wall
-g++ src\test_edge_cases.cpp -o bin\test_edge_cases.exe -lws2_32 -std=c++17 -Wall
-g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
+g++ tests\test_comprehensive.cpp -o build\test_comprehensive.exe -lws2_32 -std=c++17 -Wall
+g++ tests\test_edge_cases.cpp -o build\test_edge_cases.exe -lws2_32 -std=c++17 -Wall
+g++ tests\test_stress.cpp -o build\test_stress.exe -lws2_32 -std=c++17 -Wall
 ```
 
 ### 6.4 Running the Proxy Server
 
 ```powershell
 # Start the proxy server
-.\bin\proxy_server.exe
+.\build\proxy_server.exe
 ```
 
 The server will start on `localhost:8888` and log activities to `proxy.log`.
@@ -962,7 +962,7 @@ Invoke-WebRequest -Uri "http://example.com"
 1. **Terminal 1 - Start Proxy Server:**
    ```powershell
    cd "C:\Users\Admin\Desktop\tcp-proxy-server"
-   .\bin\proxy_server.exe
+   .\\build\\proxy_server.exe
    ```
    Keep this terminal **open** and running. You will see connection logs here.
 
@@ -972,26 +972,26 @@ Invoke-WebRequest -Uri "http://example.com"
 **Quick Start (Automated):**
 ```powershell
 # Start server in new terminal window
-Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\Admin\Desktop\tcp-proxy-server"; .\bin\proxy_server.exe'
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "C:\Users\Admin\Desktop\tcp-proxy-server"; .\build\proxy_server.exe'
 
 # Wait for server to start
 Start-Sleep -Seconds 3
 
 # Run tests in current terminal
-.\test_suite.ps1
+.\scripts\test_suite.ps1
 ```
 
 #### 6.7.2 Test Suites
 
 ```powershell
 # Run all basic functionality tests (16 tests: forwarding, filtering, errors, large transfers, concurrent)
-.\test_suite.ps1
+.\scripts\test_suite.ps1
 
 # Run large POST body tests (4 tests)
-.\test_post_bodies.ps1
+.\scripts\test_post_bodies.ps1
 
 # Run stress & edge case tests (18 tests)
-.\bin\test_stress.exe
+.\\build\\test_stress.exe
 ```
 
 **Expected Output:**
@@ -1018,7 +1018,7 @@ For permanent fix, see Section 6.1 (Installing GNU Make).
 
 ---
 
-#### Issue 2: ".\bin\test_stress.exe is not recognized"
+#### Issue 2: ".\build\test_stress.exe is not recognized"
 
 **Problem:** Test executables haven't been built yet.
 
@@ -1045,23 +1045,23 @@ g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
 **Solution:**
 ```powershell
 # Start proxy server in a separate terminal FIRST
-.\bin\proxy_server.exe
+.\\build\\proxy_server.exe
 
 # Then run tests in another terminal
-.\bin\test_stress.exe
+.\\build\\test_stress.exe
 .\test_suite.ps1
 ```
 
 **Automated approach:**
 ```powershell
 # Start server in background
-Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "$(Get-Location)"; .\bin\proxy_server.exe'
+Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd "$(Get-Location)"; .\build\proxy_server.exe'
 
 # Wait for server to start
 Start-Sleep -Seconds 2
 
 # Run tests
-.\bin\test_stress.exe
+.\build\test_stress.exe
 ```
 
 ---

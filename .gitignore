@@ -21,15 +21,17 @@ Desktop.ini
 build/
 bin/
 obj/
+*.exe
+*.o
 
-# VS Code
-.vscode/
-*.code-workspace
-
-# Logs (exclude sample logs - we want to keep deliverables/logs/)
+# Logs (exclude deliverables/logs/ - keep for submission)
 proxy.log
 *.log
 !deliverables/logs/*.txt
+!deliverables/logs/*.log
+
+# Test artifacts
+response.html
 
 # Temporary files
 *.tmp

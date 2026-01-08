@@ -374,7 +374,7 @@ Compress-Archive -Path "deliverables\*" -DestinationPath "TCP_Proxy_Server_Submi
 
 **Option 2: Archive entire project**
 ```powershell
-Compress-Archive -Path "C:\Users\Admin\Desktop\tcp-proxy-server\*" -DestinationPath "TCP_Proxy_Server_Full_Project.zip"
+Compress-Archive -Path "C:\Users\Admin\Desktop\ACM Project\*" -DestinationPath "TCP_Proxy_Server_Full_Project.zip"
 ```
 
 ### Archive Size Estimate

@@ -38,9 +38,9 @@ mkdir bin
 g++ src\proxy_server.cpp -o bin\proxy_server.exe -lws2_32 -std=c++17 -Wall
 
 # Compile test clients
-g++ src\test_comprehensive.cpp -o bin\test_comprehensive.exe -lws2_32 -std=c++17 -Wall
-g++ src\test_edge_cases.cpp -o bin\test_edge_cases.exe -lws2_32 -std=c++17 -Wall
-g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
+g++ tests\\test_comprehensive.cpp -o bin\test_comprehensive.exe -lws2_32 -std=c++17 -Wall
+g++ tests\\test_edge_cases.cpp -o bin\test_edge_cases.exe -lws2_32 -std=c++17 -Wall
+g++ tests\\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
 ```
 
 ## Detailed Build Instructions
@@ -134,9 +134,9 @@ make tests           # Test clients only
 g++ src\proxy_server.cpp -o bin\proxy_server.exe -lws2_32 -std=c++17 -Wall -O2
 
 # Compile test clients (optional)
-g++ src\test_comprehensive.cpp -o bin\test_comprehensive.exe -lws2_32 -std=c++17 -Wall
-g++ src\test_edge_cases.cpp -o bin\test_edge_cases.exe -lws2_32 -std=c++17 -Wall
-g++ src\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
+g++ tests\\test_comprehensive.cpp -o bin\test_comprehensive.exe -lws2_32 -std=c++17 -Wall
+g++ tests\\test_edge_cases.cpp -o bin\test_edge_cases.exe -lws2_32 -std=c++17 -Wall
+g++ tests\\test_stress.cpp -o bin\test_stress.exe -lws2_32 -std=c++17 -Wall
 ```
 
 ### Step 5: Verify Build
@@ -160,7 +160,7 @@ dir bin\
 
 ```powershell
 # Start in foreground
-.\bin\proxy_server.exe
+.\\build\\proxy_server.exe
 
 # Expected output:
 # TCP Proxy Server Started
@@ -172,20 +172,20 @@ dir bin\
 
 ```powershell
 # Start in new window
-Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\bin\proxy_server.exe"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", ".\\build\\proxy_server.exe"
 
 # Or start minimized
-Start-Process .\bin\proxy_server.exe -WindowStyle Minimized
+Start-Process .\\build\\proxy_server.exe -WindowStyle Minimized
 ```
 
 #### With Output Redirection:
 
 ```powershell
 # Redirect output to file
-.\bin\proxy_server.exe > server_output.log 2>&1
+.\\build\\proxy_server.exe > server_output.log 2>&1
 
 # Run in background with logging
-Start-Job -ScriptBlock { .\bin\proxy_server.exe }
+Start-Job -ScriptBlock { .\\build\\proxy_server.exe }
 ```
 
 ### Using the Proxy
@@ -241,20 +241,20 @@ Invoke-WebRequest -Uri "http://httpbin.org/post" -Method POST -Body "test=data"
 .\test_post_bodies.ps1     # 4 POST body tests
 
 # Run stress tests
-.\bin\test_stress.exe      # 18 stress tests
+.\\build\\test_stress.exe      # 18 stress tests
 ```
 
 #### Individual Test Clients:
 
 ```powershell
 # Comprehensive tests (40 tests)
-.\bin\test_comprehensive.exe
+.\\build\\test_comprehensive.exe
 
 # Edge cases (10 tests)
-.\bin\test_edge_cases.exe
+.\\build\\test_edge_cases.exe
 
 # Stress tests (18 tests)
-.\bin\test_stress.exe
+.\\build\\test_stress.exe
 ```
 
 #### Using Makefile:
@@ -422,7 +422,7 @@ make all
 
 After successful build:
 
-1. ✅ Run server: `.\bin\proxy_server.exe`
+1. ✅ Run server: `.\\build\\proxy_server.exe`
 2. ✅ Run tests: `.\test_suite.ps1`
 3. ✅ Configure browser to use proxy
 4. ✅ Test with real traffic

@@ -1,0 +1,138 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Phase 1&2: Complete Server",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "${workspaceFolder}/src/phase12_complete_server.cpp",
+                "-o",
+                "${workspaceFolder}/bin/phase12_complete_server.exe",
+                "-lws2_32",
+                "-std=c++17",
+                "-Wall"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Run Phase 1&2: Complete Server",
+            "type": "shell",
+            "command": "Start-Process",
+            "args": [
+                "powershell",
+                "-ArgumentList",
+                "'-NoExit', '-Command', '& ''${workspaceFolder}/bin/phase12_complete_server.exe'''"
+            ],
+            "dependsOn": "Build Phase 1&2: Complete Server",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build Test Client",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "${workspaceFolder}/src/test_client.cpp",
+                "-o",
+                "${workspaceFolder}/bin/test_client.exe",
+                "-lws2_32",
+                "-std=c++17",
+                "-Wall"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Run Test Suite",
+            "type": "shell",
+            "command": "echo '' | ${workspaceFolder}/bin/test_client.exe",
+            "dependsOn": "Build Test Client",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build Phase 3: HTTP Parser",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "${workspaceFolder}/src/phase3_http_parser.cpp",
+                "-o",
+                "${workspaceFolder}/bin/phase3_http_parser.exe",
+                "-lws2_32",
+                "-std=c++17",
+                "-Wall"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Run Phase 3: HTTP Parser",
+            "type": "shell",
+            "command": "Start-Process",
+            "args": [
+                "powershell",
+                "-ArgumentList",
+                "'-NoExit', '-Command', 'Write-Host ''=== PHASE 3 SERVER STARTING ==='' -ForegroundColor Green; & ''${workspaceFolder}/bin/phase3_http_parser.exe'''"
+            ],
+            "dependsOn": "Build Phase 3: HTTP Parser",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Build Phase 3 Test Client",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "${workspaceFolder}/src/phase3_test_client.cpp",
+                "-o",
+                "${workspaceFolder}/bin/phase3_test_client.exe",
+                "-lws2_32",
+                "-std=c++17",
+                "-Wall"
+            ],
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        },
+        {
+            "label": "Run Phase 3 Test Suite",
+            "type": "shell",
+            "command": "${workspaceFolder}/bin/phase3_test_client.exe",
+            "dependsOn": "Build Phase 3 Test Client",
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            }
+        }
+    ]
+}
