@@ -23,6 +23,11 @@ SOCKET connectToProxy() {
     SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock == INVALID_SOCKET) return INVALID_SOCKET;
     
+    // Set socket timeout (10 seconds)
+    DWORD timeout = 10000;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char*)&timeout, sizeof(timeout));
+    setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char*)&timeout, sizeof(timeout));
+    
     sockaddr_in serverAddr;
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = inet_addr(PROXY_HOST.c_str());
@@ -50,7 +55,7 @@ bool testLargeHeaders() {
     
     // Create request with large header
     string largeHeader(8000, 'X'); // 8KB of X's
-    string request = "GET / HTTP/1.1\r\n";
+    string request = "GET http://example.com/ HTTP/1.1\r\n";
     request += "Host: example.com\r\n";
     request += "X-Large-Header: " + largeHeader + "\r\n";
     request += "\r\n";
@@ -84,7 +89,7 @@ bool testLargePostBody() {
     
     // Create large body
     string largeBody(100000, 'A'); // 100KB
-    string request = "POST /post HTTP/1.1\r\n";
+    string request = "POST http://httpbin.org/post HTTP/1.1\r\n";
     request += "Host: httpbin.org\r\n";
     request += "Content-Length: " + to_string(largeBody.length()) + "\r\n";
     request += "\r\n";
@@ -118,7 +123,7 @@ bool testComplexQueryParameters() {
         return false;
     }
     
-    string request = "GET /get?q=ai+proxy&lang=en&special=%20%21 HTTP/1.1\r\n";
+    string request = "GET http://httpbin.org/get?q=ai+proxy&lang=en&special=%20%21 HTTP/1.1\r\n";
     request += "Host: httpbin.org\r\n\r\n";
     
     send(sock, request.c_str(), request.length(), 0);
@@ -148,7 +153,7 @@ bool testSubdomainBlocking() {
         return false;
     }
     
-    string request = "GET / HTTP/1.1\r\n";
+    string request = "GET http://m.facebook.com/ HTTP/1.1\r\n";
     request += "Host: m.facebook.com\r\n\r\n";
     
     send(sock, request.c_str(), request.length(), 0);
@@ -178,7 +183,7 @@ bool testCaseInsensitiveBlocking() {
         return false;
     }
     
-    string request = "GET / HTTP/1.1\r\n";
+    string request = "GET http://FaCeBoOk.CoM/ HTTP/1.1\r\n";
     request += "Host: FaCeBoOk.CoM\r\n\r\n";
     
     send(sock, request.c_str(), request.length(), 0);
@@ -208,7 +213,7 @@ bool testInvalidDomain() {
         return false;
     }
     
-    string request = "GET / HTTP/1.1\r\n";
+    string request = "GET http://this-domain-does-not-exist-12345.invalid/ HTTP/1.1\r\n";
     request += "Host: this-domain-does-not-exist-12345.invalid\r\n\r\n";
     
     send(sock, request.c_str(), request.length(), 0);
@@ -270,7 +275,7 @@ bool testMissingHostHeader() {
         return false;
     }
     
-    string request = "GET / HTTP/1.1\r\n\r\n"; // No Host header
+    string request = "GET http://example.com/ HTTP/1.1\r\n\r\n"; // No Host header
     
     send(sock, request.c_str(), request.length(), 0);
     
@@ -300,7 +305,7 @@ bool testHalfOpenConnection() {
     }
     
     // Send only partial request
-    string partial = "GET / HTTP/1.1\r\n";
+    string partial = "GET http://example.com/ HTTP/1.1\r\n";
     send(sock, partial.c_str(), partial.length(), 0);
     
     cout << "Waiting 5 seconds with incomplete request...\n";
@@ -325,7 +330,7 @@ bool testConcurrentConnections() {
         SOCKET sock = connectToProxy();
         if (sock == INVALID_SOCKET) return;
         
-        string request = "GET / HTTP/1.1\r\nHost: example.com\r\n\r\n";
+        string request = "GET http://example.com/ HTTP/1.1\r\nHost: example.com\r\n\r\n";
         send(sock, request.c_str(), request.length(), 0);
         
         char buffer[1024];

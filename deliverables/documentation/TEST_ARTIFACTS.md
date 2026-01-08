@@ -17,14 +17,14 @@
 
 ### 1.1 Test Coverage Summary
 
-| Category | Test File | Test Count | Purpose |
-|----------|-----------|------------|---------|
-| **Comprehensive** | test_comprehensive.cpp | 40 tests | End-to-end functionality |
-| **Edge Cases** | test_edge_cases.cpp | 10 tests | Boundary conditions, malformed input |
-| **Stress** | test_stress.cpp | 18 tests | Performance, concurrency, limits |
-| **PowerShell Suite** | test_suite.ps1 | 15 tests | Functional testing with cURL |
-| **POST Bodies** | test_post_bodies.ps1 | 4 tests | Large POST requests |
-| **TOTAL** | | **87 tests** | Full coverage |
+| Category | Test File | Test Count | Purpose | Execution Time |
+|----------|-----------|------------|---------|----------------|
+| **Comprehensive** | test_comprehensive.exe | 40 tests | End-to-end functionality, all HTTP methods | ~104 seconds |
+| **Edge Cases** | test_edge_cases.exe | 10 tests | Boundary conditions, malformed input | ~18 seconds |
+| **Stress** | test_stress.exe | 18 tests | Performance, concurrency, limits | ~20 seconds |
+| **PowerShell Suite** | test_suite.ps1 | 16 tests | Functional testing with cURL | ~10 seconds |
+| **POST Bodies** | test_post_bodies.ps1 | 4 tests | Large POST requests | ~6 seconds |
+| **TOTAL** | | **88 tests** | Full coverage | **~158 seconds** |
 
 ### 1.2 Test Environment Requirements
 

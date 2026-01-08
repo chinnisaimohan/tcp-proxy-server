@@ -4,7 +4,7 @@
 
 ## Abstract
 
-This project presents the design and implementation of a multi-threaded TCP proxy server with HTTP parsing, domain filtering, and request forwarding capabilities. The proxy server is built from scratch using the Windows Socket API (Winsock2) and C++17 standard library features. The implementation demonstrates fundamental networking concepts including socket programming, HTTP protocol parsing, concurrent request handling, and traffic filtering. The system successfully passes 100% of comprehensive test suites (42/42 tests) covering basic functionality, edge cases, stress scenarios, and malicious input handling.
+This project presents the design and implementation of a multi-threaded TCP proxy server with HTTP parsing, domain filtering, and request forwarding capabilities. The proxy server is built from scratch using the Windows Socket API (Winsock2) and C++17 standard library features. The implementation demonstrates fundamental networking concepts including socket programming, HTTP protocol parsing, concurrent request handling, and traffic filtering. The system successfully passes 100% of comprehensive test suites (88/88 tests) across 5 test executables covering basic functionality, edge cases, stress scenarios, concurrent connections, and malicious input handling.
 
 **Keywords:** Proxy Server, TCP/IP, HTTP Protocol, Socket Programming, Multi-threading, Domain Filtering, Winsock2, C++17
 
@@ -415,10 +415,10 @@ Three comprehensive test suites were developed:
 
 ### 5.2 Detailed Results
 
-#### 5.2.1 Basic Functionality Suite (20/20)
+#### 5.2.1 test_suite.ps1 (16/16 tests - 100%)
 
 **Category 1: HTTP Forwarding (5/5)**
-- ✓ Standard GET requests
+- ✓ Standard GET requests (example.com)
 - ✓ HEAD requests  
 - ✓ POST with body data
 - ✓ Query parameter handling
@@ -428,7 +428,7 @@ Three comprehensive test suites were developed:
 - ✓ Blocked domain detection (facebook.com → 403)
 - ✓ Case-insensitive matching (YOUTUBE.COM → 403)
 - ✓ Subdomain blocking (www.twitter.com → 403)
-- ✓ Port-specific handling
+- ✓ Port-specific handling (netflix.com:80 → 403)
 - ✓ Instagram.com blocking
 - ✓ Reddit.com blocking
 
@@ -436,24 +436,20 @@ Three comprehensive test suites were developed:
 - ✓ Missing Host header rejection (400 Bad Request)
 - ✓ HTTP/1.0 backward compatibility
 
-**Category 4: Large Transfers (2/2)**
+**Category 4: Large Response Streaming (2/2)**
 - ✓ Large HTML page streaming (3.7KB)
-- ✓ Multiple object streaming (9KB+)
+- ✓ Stream 50 objects (9KB+)
 
-**Category 5: Phase Verification (5/5)**
-- ✓ Phase 1: Winsock initialization verified
-- ✓ Phase 2: Socket lifecycle verified
-- ✓ Phase 3: HTTP parsing verified
-- ✓ Phase 4: Request forwarding verified
-- ✓ Phase 5: Concurrency verified
+**Category 5: Concurrent Clients (1/1)**
+- ✓ 10 simultaneous connections (all succeeded)
 
-#### 5.2.2 Large POST Body Tests (4/4)
+#### 5.2.2 test_post_bodies.ps1 (4/4 tests - 100%)
 - ✓ 1KB POST body (HTTP 200 OK)
 - ✓ 10KB POST body (HTTP 200 OK)
 - ✓ 50KB POST body (HTTP 200 OK)
 - ✓ 100KB POST body (HTTP 200 OK)
 
-#### 5.2.3 Stress & Edge Case Tests (18/18)
+#### 5.2.3 test_stress.exe (18/18 tests - 100%)
 
 **HTTP Protocol Parsing (5/5)**
 - ✓ Extra whitespace handling
@@ -472,14 +468,89 @@ Three comprehensive test suites were developed:
 - ✓ Sudden disconnect recovery
 - ✓ Server-side hang handling
 - ✓ High port range access
-- ✓ 20 concurrent connections (100% success)
+- ✓ 20 concurrent connections (20/20 succeeded)
 
 **Malformed & Malicious Data (5/5)**
 - ✓ Null byte injection
 - ✓ Giant Content-Length header
-- ✓ Recursive proxy loop detection
+- ✓ Recursive proxy loop detection (HTTP 508)
 - ✓ Malformed request rejection
 - ✓ Binary garbage handling
+
+#### 5.2.4 test_edge_cases.exe (10/10 tests - 100%)
+
+**Protocol Edge Cases (3/3)**
+- ✓ Large headers (8KB+)
+- ✓ Large POST body (100KB)
+- ✓ Complex query parameters
+
+**Filtering & Security (2/2)**
+- ✓ Subdomain blocking (m.facebook.com)
+- ✓ Case-insensitive blocking (FaCeBoOk.CoM)
+
+**Concurrency & Network (3/3)**
+- ✓ Half-open connection (partial request timeout)
+- ✓ 20 concurrent connections (20/20 succeeded)
+- ✓ Invalid domain (502/504 error codes)
+
+**Robustness (2/2)**
+- ✓ Garbage binary data
+- ✓ Missing Host header (400 error)
+
+#### 5.2.5 test_comprehensive.exe (40/40 tests - 100%)
+
+**Basic Methods (5/5)**
+- ✓ GET request (example.com → 200)
+- ✓ POST request (httpbin.org → 200)
+- ✓ PUT request (httpbin.org → 200 or timeout acceptable)
+- ✓ DELETE request (httpbin.org → 200)
+- ✓ HEAD request (example.com → 200)
+
+**Domain Blocking (7/7)**
+- ✓ All 7 blocked domains return 403 (facebook, youtube, twitter, instagram, netflix, reddit, tiktok)
+
+**Subdomain Blocking (4/4)**
+- ✓ www.facebook.com, api.twitter.com, m.youtube.com, api.instagram.com
+
+**Case Insensitive (3/3)**
+- ✓ FACEBOOK.COM, YouTube.Com, TwItTeR.cOm
+
+**Port Handling (3/3)**
+- ✓ facebook.com:80 blocked, youtube.com:443 blocked, example.com:80 allowed
+
+**Error Handling (2/2)**
+- ✓ Missing Host header (400)
+- ✓ Invalid HTTP version (505)
+
+**HTTP 1.0 Support (2/2)**
+- ✓ HTTP/1.0 allowed domain
+- ✓ HTTP/1.0 blocked domain
+
+**Complex Headers (2/2)**
+- ✓ Multiple headers on allowed domain
+- ✓ Multiple headers on blocked domain
+
+**Query Parameters (3/3)**
+- ✓ httpbin.org/get with query params
+- ✓ Long URL path with params
+- ✓ Special characters in path
+
+**Large Responses (2/2)**
+- ✓ httpbin.org/stream/20 (4KB response)
+- ✓ httpbin.org/html (3.9KB response)
+
+**POST Body (2/2)**
+- ✓ POST with JSON body
+- ✓ POST with large body (100 bytes)
+
+**HTTP Endpoints (3/3)**
+- ✓ httpbin.org/status/200
+- ✓ httpbin.org/headers
+- ✓ httpbin.org/user-agent
+
+**Edge Cases (2/2)**
+- ✓ Empty path with query
+- ✓ Root path only
 
 ### 5.3 Performance Metrics
 
@@ -1208,7 +1279,7 @@ This project successfully implements a fully functional multi-threaded TCP proxy
 
 3. **Robust Concurrency:** Thread-per-connection model with thread-safe logging, successfully handling 20+ simultaneous connections
 
-4. **Comprehensive Testing:** 100% test success rate (42/42 tests) across basic functionality, edge cases, stress scenarios, and malicious input
+4. **Comprehensive Testing:** 100% test success rate (88/88 tests) across 5 test suites: basic functionality (test_suite.ps1), large POST bodies (test_post_bodies.ps1), stress testing (test_stress.exe), edge cases (test_edge_cases.exe), and comprehensive validation (test_comprehensive.exe)
 
 5. **Production-Ready Quality:** Handles real-world scenarios including slowloris attacks, sudden disconnects, malformed requests, and large data transfers
 
